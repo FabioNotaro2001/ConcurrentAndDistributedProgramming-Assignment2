@@ -4,18 +4,47 @@ import pcd.ass01.simengineseq.AbstractAgent;
 
 public class CarAgentThread extends Thread {
 
-    private final AbstractAgent carAgent;  
+    private final AbstractAgent carAgent;
+    private int t = 0;
+    private final int dt;
+    private final int nSteps;
 
-    public CarAgentThread(final AbstractAgent carAgent) {
+	/* in the case of sync with wall-time */
+	private final int nStepsPerSec;
+
+    /* for time statistics*/
+	private long currentWallTime;
+
+    public CarAgentThread(final AbstractAgent carAgent, int dt, int nSteps, int nStepsPerSec) {
         super();
         this.carAgent = carAgent;
+        this.dt = dt;
+        this.nSteps = nSteps;
+        this.nStepsPerSec = nStepsPerSec;
     }
 
     @Override
     public void start() {
-        while (true) {
-            this.carAgent.step();
-            //Thread.sleep(...); // Fatto meglio per limitare a X fps
+        int stepsDone = 0;
+        while (stepsDone < this.nSteps) {
+            this.currentWallTime = System.currentTimeMillis();
+            
+            this.carAgent.step(dt);
+            this.t += this.dt;
+
+            this.syncWithWallTime();
+            stepsDone++;
         }
     }
+
+    private void syncWithWallTime() {
+		try {
+			long newWallTime = System.currentTimeMillis();
+			long delay = 1000 / this.nStepsPerSec;
+			long wallTimeDT = newWallTime - this.currentWallTime;
+			if (wallTimeDT < delay) {
+				Thread.sleep(delay - wallTimeDT);
+			}
+		} catch (Exception ex) {}		
+	}
 }

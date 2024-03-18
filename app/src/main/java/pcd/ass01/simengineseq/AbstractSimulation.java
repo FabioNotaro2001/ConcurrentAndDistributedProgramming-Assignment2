@@ -3,6 +3,9 @@ package pcd.ass01.simengineseq;
 import java.util.ArrayList;
 import java.util.List;
 
+import pcd.ass01.simtrafficbase.CarAgentThread;
+
+
 /**
  * Base class for defining concrete simulations
  *  
@@ -71,12 +74,12 @@ public abstract class AbstractSimulation {
 		long timePerStep = 0;
 		int nSteps = 0;
 
-
 		List<Thread> list = new ArrayList<>();
-		
-		// for(int i=0; i < Runtime.getRuntime().availableProcessors(); i++){
-		// 	list.add(new )
-		// }
+		for(int i=0; i < agents.size(); i++){
+			Thread th = new CarAgentThread(agents.get(i), dt, numSteps, nStepsPerSec);
+			list.add(th);
+			th.start();
+		}
 
 		while (nSteps < numSteps) {
 
@@ -85,9 +88,6 @@ public abstract class AbstractSimulation {
 			/* make a step */
 			
 			env.step(dt);
-			for (var agent: agents) {
-				agent.step(dt);
-			}
 			t += dt;
 			
 			notifyNewStep(t, agents, env);
