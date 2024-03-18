@@ -70,7 +70,14 @@ public abstract class AbstractSimulation {
 		
 		long timePerStep = 0;
 		int nSteps = 0;
+
+
+		List<Thread> list = new ArrayList<>();
 		
+		// for(int i=0; i < Runtime.getRuntime().availableProcessors(); i++){
+		// 	list.add(new )
+		// }
+
 		while (nSteps < numSteps) {
 
 			currentWallTime = System.currentTimeMillis();
