@@ -27,12 +27,12 @@ public class CarAgentThread extends Thread {
     public void start() {
         int stepsDone = 0;
         while (stepsDone < this.nSteps) {
-            this.currentWallTime = System.currentTimeMillis();
+            this.currentWallTime = System.currentTimeMillis(); // Setta il tempo globale per ciascuan macchina ad ogni step.
             
             this.carAgent.step(dt);
             this.t += this.dt;
 
-            this.syncWithWallTime();
+            this.syncWithWallTime(); // Aspettiamo il tempo prima del prossimo passo da fare.
             stepsDone++;
         }
     }
