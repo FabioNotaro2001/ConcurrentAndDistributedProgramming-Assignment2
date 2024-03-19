@@ -64,6 +64,7 @@ public abstract class AbstractSimulation {
 		/* initialize the env and the agents inside */
 		int t = t0;
 
+		env.setnSteps(numSteps);
 		env.init();
 		for (var a: agents) {
 			a.init(env);
@@ -87,7 +88,6 @@ public abstract class AbstractSimulation {
 		
 			/* make a step */
 			
-			env.step(dt);
 			t += dt;
 			
 			notifyNewStep(t, agents, env);
@@ -118,11 +118,13 @@ public abstract class AbstractSimulation {
 	protected void setupTimings(int t0, int dt) {
 		this.dt = dt;
 		this.t0 = t0;
+		this.env.setDt(dt);
 	}
 	
 	protected void syncWithTime(int nCyclesPerSec) {
 		this.toBeInSyncWithWallTime = true;
 		this.nStepsPerSec = nCyclesPerSec;
+		this.env.setCyclesPerSec(nCyclesPerSec);
 	}
 		
 	protected void setupEnvironment(AbstractEnvironment env) {

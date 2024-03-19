@@ -21,10 +21,10 @@ public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 
 		Random  gen = new Random(1);
 
-		this.setupTimings(0, 1);
-		
 		RoadsEnv env = new RoadsEnv();
 		this.setupEnvironment(env);
+		
+		this.setupTimings(0, 1);
 				
 		TrafficLight tl1 = env.createTrafficLight(new P2d(740,300), TrafficLight.TrafficLightState.GREEN, 75, 25, 100);
 		

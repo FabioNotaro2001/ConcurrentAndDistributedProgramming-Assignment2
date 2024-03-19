@@ -10,13 +10,42 @@ package pcd.ass01.simengineseq;
 public abstract class AbstractEnvironment {
 
 	private String id;
-	
+	private int dt;
+	private int nSteps;
+	private int nCyclesPerSec;
+
 	protected AbstractEnvironment(String id) {
 		this.id = id;		
 	}
 	
 	public String getId() {
 		return id;
+	}
+
+	public int getDt() {
+		return dt;
+	}
+
+	public void setDt(int dt) {
+		this.dt = dt;
+	}
+
+
+	public int getnSteps() {
+		return nSteps;
+	}
+
+	public void setnSteps(int nSteps) {
+		this.nSteps = nSteps;
+	}
+
+	
+	public int getCyclesPerSec() {
+		return nCyclesPerSec;
+	}
+
+	public void setCyclesPerSec(int nCyclesPerSec) {
+		this.nCyclesPerSec = nCyclesPerSec;
 	}
 	
 	/**

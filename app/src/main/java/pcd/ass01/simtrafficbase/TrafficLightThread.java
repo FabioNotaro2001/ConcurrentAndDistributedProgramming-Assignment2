@@ -1,10 +1,9 @@
 package pcd.ass01.simtrafficbase;
 
-import pcd.ass01.simengineseq.AbstractAgent;
 
-public class CarAgentThread extends Thread {
+public class TrafficLightThread extends Thread {
 
-    private final AbstractAgent carAgent;
+    private TrafficLight trafficLight;
     private final int dt;
     private final int nSteps;
 
@@ -14,9 +13,9 @@ public class CarAgentThread extends Thread {
     /* for time statistics*/
 	private long currentWallTime;
 
-    public CarAgentThread(final AbstractAgent carAgent, int dt, int nSteps, int nStepsPerSec) {
+    public TrafficLightThread(final TrafficLight trafficLight, int dt, int nSteps, int nStepsPerSec) {
         super();
-        this.carAgent = carAgent;
+        this.trafficLight = trafficLight;
         this.dt = dt;
         this.nSteps = nSteps;
         this.nStepsPerSec = nStepsPerSec;
@@ -28,7 +27,7 @@ public class CarAgentThread extends Thread {
         while (stepsDone < this.nSteps) {
             this.currentWallTime = System.currentTimeMillis(); // Setta il tempo globale per ciascuan macchina ad ogni step.
             
-            this.carAgent.step(dt);
+            this.trafficLight.step(dt);
 
             this.syncWithWallTime(); // Aspettiamo il tempo prima del prossimo passo da fare.
             stepsDone++;

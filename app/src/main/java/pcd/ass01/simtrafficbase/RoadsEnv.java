@@ -36,14 +36,13 @@ public class RoadsEnv extends AbstractEnvironment {
 	public void init() {
 		for (var tl: trafficLights) {
 			tl.init();
+			new TrafficLightThread(tl, this.getDt(), this.getnSteps(), this.getCyclesPerSec()).start();
 		}
 	}
 	
 	@Override
 	public void step(int dt) {
-		for (var tl: trafficLights) {
-			tl.step(dt);
-		}
+		//
 	}
 	
 	public void registerNewCar(CarAgent car, Road road, double pos) {
