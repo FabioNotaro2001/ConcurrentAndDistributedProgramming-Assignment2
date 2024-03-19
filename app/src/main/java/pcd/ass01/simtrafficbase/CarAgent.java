@@ -39,7 +39,7 @@ public abstract class CarAgent extends AbstractAgent {
 	 * Basic behaviour of a car agent structured into a sense/decide/act structure 
 	 * 
 	 */
-	public void step(int dt) {
+	public synchronized void step(int dt) {
 
 		/* sense */
 

@@ -23,11 +23,12 @@ public class TrafficSimulationSingleRoadTwoCars extends AbstractSimulation {
 		int t0 = 0;
 		int dt = 1;
 		
-		this.setupTimings(t0, dt);
 		
 		RoadsEnv env = new RoadsEnv();
 		this.setupEnvironment(env);
 		
+		this.setupTimings(t0, dt);
+
 		Road r = env.createRoad(new P2d(0,300), new P2d(1500,300));
 		CarAgent car1 = new CarAgentBasic("car-1", env, r, 0, 0.1, 0.2, 8);
 		this.addAgent(car1);		

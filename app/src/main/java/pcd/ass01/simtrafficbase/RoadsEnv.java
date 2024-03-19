@@ -11,7 +11,7 @@ import pcd.ass01.simengineseq.Percept;
 
 public class RoadsEnv extends AbstractEnvironment {
 		
-	private static final int MIN_DIST_ALLOWED = 5;
+	private static final int MIN_DIST_ALLOWED = 10;
 	private static final int CAR_DETECTION_RANGE = 30;
 	private static final int SEM_DETECTION_RANGE = 30;
 	
@@ -95,25 +95,25 @@ public class RoadsEnv extends AbstractEnvironment {
 				.min((c1, c2) -> (int) Math.round(c1.roadPos() - c2.roadPos()));
 	}
 	
-	
 	@Override
 	public void doAction(String agentId, Action act) {
 		switch (act) {
 		case MoveForward mv: {
 			CarAgentInfo info = registeredCars.get(agentId);
 			Road road = info.getRoad();
-			Optional<CarAgentInfo> nearestCar = getNearestCarInFront(road, info.getPos(), CAR_DETECTION_RANGE);
+			Double pos = info.getPos();
+			Optional<CarAgentInfo> nearestCar = getNearestCarInFront(road, pos, CAR_DETECTION_RANGE);
 			
 			if (!nearestCar.isEmpty()) {
-				double dist = nearestCar.get().getPos() - info.getPos();
+				double dist = nearestCar.get().getPos() - pos;
 				if (dist > mv.distance() + MIN_DIST_ALLOWED) {
-					info.updatePos(info.getPos() + mv.distance());
+					info.updatePos(pos + mv.distance());
 				}
 			} else {
-				info.updatePos(info.getPos() + mv.distance());
+				info.updatePos(pos + mv.distance());
 			}
 
-			if (info.getPos() > road.getLen()) {
+			if (pos > road.getLen()) {
 				info.updatePos(0);
 			}
 			break;

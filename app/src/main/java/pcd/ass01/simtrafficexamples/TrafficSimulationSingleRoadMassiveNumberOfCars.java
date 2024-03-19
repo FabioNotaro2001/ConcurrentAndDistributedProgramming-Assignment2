@@ -17,11 +17,12 @@ public class TrafficSimulationSingleRoadMassiveNumberOfCars extends AbstractSimu
 	}
 	
 	public void setup() {
-		this.setupTimings(0, 1);
 
 		RoadsEnv env = new RoadsEnv();
 		this.setupEnvironment(env);
 		
+		this.setupTimings(0, 1);
+
 		Road road = env.createRoad(new P2d(0,300), new P2d(15000,300));
 
 		for (int i = 0; i < numCars; i++) {
