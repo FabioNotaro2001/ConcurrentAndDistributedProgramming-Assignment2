@@ -2,12 +2,15 @@ package pcd.ass01.simtrafficexamples;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import pcd.ass01.simengineseq.AbstractAgent;
 import pcd.ass01.simengineseq.AbstractEnvironment;
+import pcd.ass01.simengineseq.AbstractSimulation;
 import pcd.ass01.simengineseq.SimulationListener;
 import pcd.ass01.simtrafficbase.CarAgentInfo;
 import pcd.ass01.simtrafficbase.Road;
@@ -22,8 +25,10 @@ public class RoadSimView extends JFrame implements SimulationListener {
 
 	private RoadSimViewPanel panel;
 	private static final int CAR_DRAW_SIZE = 10;
+
+	private AbstractSimulation simulation;
 	
-	public RoadSimView() {
+	public RoadSimView(AbstractSimulation simulation) {
 		super("RoadSim View");
 		setSize(1500,600);
 			
@@ -31,13 +36,52 @@ public class RoadSimView extends JFrame implements SimulationListener {
 		panel.setSize(1500, 600);
 
 		JPanel cp = new JPanel();
+
+
 		LayoutManager layout = new BorderLayout();
 		cp.setLayout(layout);
 		cp.add(BorderLayout.CENTER,panel);
-		setContentPane(cp);		
-		
+
+		// Nostro codice aggiunto.
+		this.simulation = simulation;
+		JPanel controlPanel = new JPanel();
+		JTextField stepsTextField = new JFormattedTextField("1");
+		JButton buttonStart = new JButton("START");
+		JButton buttonStop = new JButton("STOP");
+
+		buttonStart.setVisible(true);
+		buttonStop.setVisible(true);
+
+		stepsTextField.setColumns(10);
+
+		buttonStart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try{
+					int wishedSteps = Integer.parseInt(stepsTextField.getText());
+					simulation.run(wishedSteps);
+				} catch(Exception ex) {
+					System.out.println("EXCEPTION! " + ex);
+				}
+
+			}
+		});
+		buttonStop.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		});
+
+		controlPanel.setLayout(new FlowLayout());
+		controlPanel.add(stepsTextField);
+		controlPanel.add(buttonStart);
+		controlPanel.add(buttonStop);
+		cp.add(controlPanel);
+		controlPanel.setVisible(true);
+
+		setContentPane(cp);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-			
 	}
 	
 	public void display() {
