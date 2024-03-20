@@ -21,7 +21,7 @@ public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 
 		Random  gen = new Random(1);
 
-		RoadsEnv env = new RoadsEnv();
+		RoadsEnv env = new RoadsEnv(this);
 		this.setupEnvironment(env);
 		
 		this.setupTimings(0, 1);

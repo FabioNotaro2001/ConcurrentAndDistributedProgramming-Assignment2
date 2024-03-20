@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import pcd.ass01.simengineseq.AbstractEnvironment;
+import pcd.ass01.simengineseq.AbstractSimulation;
 import pcd.ass01.simengineseq.Action;
 import pcd.ass01.simengineseq.Percept;
 
@@ -24,19 +25,21 @@ public class RoadsEnv extends AbstractEnvironment {
 	/* cars situated in the environment */	
 	private HashMap<String, CarAgentInfo> registeredCars;
 
+	private AbstractSimulation simulation;
 
-	public RoadsEnv() {
+	public RoadsEnv(AbstractSimulation simulation) {
 		super("traffic-env");
 		registeredCars = new HashMap<>();	
 		trafficLights = new ArrayList<>();
 		roads = new ArrayList<>();
+		this.simulation = simulation;
 	}
 	
 	@Override
 	public void init() {
 		for (var tl: trafficLights) {
 			tl.init();
-			new TrafficLightThread(tl, this.getDt(), this.getnSteps(), this.getCyclesPerSec()).start();
+			new TrafficLightThread(tl, this.getDt(), this.getnSteps(), this.getCyclesPerSec(), simulation).start();
 		}
 	}
 	

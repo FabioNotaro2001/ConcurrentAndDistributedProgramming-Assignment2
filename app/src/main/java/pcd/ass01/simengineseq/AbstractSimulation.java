@@ -37,6 +37,9 @@ public abstract class AbstractSimulation {
 	private long endWallTime;
 	private long averageTimePerStep;
 
+	// New field that changes when the stop button is pressed.
+	private volatile boolean stopRequested = false;
+
 
 	protected AbstractSimulation() {
 		agents = new ArrayList<AbstractAgent>();
@@ -57,7 +60,9 @@ public abstract class AbstractSimulation {
 	 * 
 	 * @param numSteps
 	 */
-	public void run(int numSteps) {		
+	public void run(int numSteps) {
+
+		this.stopRequested = false;
 
 		startWallTime = System.currentTimeMillis();
 
@@ -77,12 +82,12 @@ public abstract class AbstractSimulation {
 
 		List<Thread> list = new ArrayList<>();
 		for(int i=0; i < agents.size(); i++){
-			Thread th = new CarAgentThread(agents.get(i), dt, numSteps, nStepsPerSec);
+			Thread th = new CarAgentThread(agents.get(i), dt, numSteps, nStepsPerSec, this);
 			list.add(th);
 			th.start();
 		}
 
-		while (nSteps < numSteps) {
+		while (nSteps < numSteps && !isStopped()) {	// Added condition for stop button pressed.
 
 			currentWallTime = System.currentTimeMillis();
 		
@@ -98,7 +103,16 @@ public abstract class AbstractSimulation {
 			if (toBeInSyncWithWallTime) {
 				syncWithWallTime();
 			}
-		}	
+		}
+
+		// When the simulation is over or stopped the car threads must be joined.
+		list.forEach(x -> {
+			try {
+				x.join();
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		});
 		
 		endWallTime = System.currentTimeMillis();
 		this.averageTimePerStep = timePerStep / numSteps;
@@ -164,5 +178,14 @@ public abstract class AbstractSimulation {
 				Thread.sleep(delay - wallTimeDT);
 			}
 		} catch (Exception ex) {}		
+	}
+
+	// Methods synchronized useful to stop the simulation after button stop pressed.
+	public synchronized boolean isStopped(){
+		return this.stopRequested;
+	}
+
+	public synchronized void stop(){
+		this.stopRequested = true;
 	}
 }

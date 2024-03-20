@@ -26,50 +26,52 @@ public class RoadSimView extends JFrame implements SimulationListener {
 	private RoadSimViewPanel panel;
 	private static final int CAR_DRAW_SIZE = 10;
 
-	private AbstractSimulation simulation;
-	
 	public RoadSimView(AbstractSimulation simulation) {
 		super("RoadSim View");
-		setSize(1500,600);
-			
-		panel = new RoadSimViewPanel(1500,600); 
+		setSize(1500, 600);
+
+		panel = new RoadSimViewPanel(1500, 600); // Imposta le dimensioni del pannello
 		panel.setSize(1500, 600);
 
 		JPanel cp = new JPanel();
 
-
 		LayoutManager layout = new BorderLayout();
 		cp.setLayout(layout);
-		cp.add(BorderLayout.CENTER,panel);
+		cp.add(BorderLayout.CENTER, panel);
 
-		// Nostro codice aggiunto.
-		this.simulation = simulation;
+		// Our added code.
 		JPanel controlPanel = new JPanel();
-		JTextField stepsTextField = new JFormattedTextField("1");
+		JTextField stepsTextField = new JFormattedTextField("50");
 		JButton buttonStart = new JButton("START");
 		JButton buttonStop = new JButton("STOP");
-
-		buttonStart.setVisible(true);
-		buttonStop.setVisible(true);
+		buttonStop.setEnabled(false);
 
 		stepsTextField.setColumns(10);
 
 		buttonStart.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try{
+				try {
 					int wishedSteps = Integer.parseInt(stepsTextField.getText());
-					simulation.run(wishedSteps);
-				} catch(Exception ex) {
+
+					// Starts the simulation into a separated thread so that the GUI doesn't get stuck.
+					new Thread(() -> {
+						simulation.run(wishedSteps);
+					}).start();
+					buttonStart.setEnabled(false);
+					buttonStop.setEnabled(true);
+				} catch (Exception ex) {
 					System.out.println("EXCEPTION! " + ex);
 				}
-
 			}
 		});
 		buttonStop.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				simulation.stop();
 
+				buttonStart.setEnabled(true);
+				buttonStop.setEnabled(false);
 			}
 		});
 
@@ -77,13 +79,12 @@ public class RoadSimView extends JFrame implements SimulationListener {
 		controlPanel.add(stepsTextField);
 		controlPanel.add(buttonStart);
 		controlPanel.add(buttonStop);
-		cp.add(controlPanel);
-		controlPanel.setVisible(true);
-
+		cp.add(controlPanel, BorderLayout.NORTH);
 		setContentPane(cp);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setVisible(true);
 	}
-	
+
 	public void display() {
 		SwingUtilities.invokeLater(() -> {
 			this.setVisible(true);

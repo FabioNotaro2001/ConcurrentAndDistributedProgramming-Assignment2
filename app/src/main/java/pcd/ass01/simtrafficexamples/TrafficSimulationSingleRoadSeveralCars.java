@@ -21,10 +21,11 @@ public class TrafficSimulationSingleRoadSeveralCars extends AbstractSimulation {
 	
 	public void setup() {
 
+		RoadsEnv env = new RoadsEnv(this);
+		this.setupEnvironment(env);
 		this.setupTimings(0, 1);
 
-		RoadsEnv env = new RoadsEnv();
-		this.setupEnvironment(env);
+
 		
 		Road road = env.createRoad(new P2d(0,300), new P2d(1500,300));
 
