@@ -7,7 +7,6 @@ import pcd.ass01.simtrafficbase.P2d;
 import pcd.ass01.simtrafficbase.Road;
 import pcd.ass01.simtrafficbase.RoadsEnv;
 import pcd.ass01.simtrafficbase.TrafficLight;
-import pcd.ass01.simtrafficbase.TrafficLight.TrafficLightState;
 
 /**
  * 

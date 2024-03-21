@@ -27,6 +27,10 @@ public class RoadsEnv extends AbstractEnvironment {
 
 	private AbstractSimulation simulation;
 
+	private Boolean flagInit = true; //true if trafficlight has to be initializated
+
+	List<TrafficLightThread> trafficLightThreads = new ArrayList<>();
+
 	public RoadsEnv(AbstractSimulation simulation) {
 		super("traffic-env");
 		registeredCars = new HashMap<>();	
@@ -38,11 +42,16 @@ public class RoadsEnv extends AbstractEnvironment {
 	@Override
 	public void init() {
 		for (var tl: trafficLights) {
-			tl.init();
-			new TrafficLightThread(tl, this.getDt(), this.getnSteps(), this.getCyclesPerSec(), simulation).start();
+			//evitare che si riinizializzi quando si ripreme start
+			if (flagInit)
+				tl.init();
+			TrafficLightThread trafficLightThread = new TrafficLightThread(tl, this.getDt(), this.getnSteps(), this.getCyclesPerSec(), simulation);
+			trafficLightThread.start();
+			trafficLightThreads.add(trafficLightThread);
 		}
+		flagInit = false;
 	}
-	
+
 	@Override
 	public void step(int dt) {
 		//
