@@ -10,8 +10,6 @@ public class BarrierImpl implements Barrier {
     private Condition c;
     private int npass = 0;
 
-
-
     public BarrierImpl(int nThreads){
         this.nThreads = nThreads;
         this.mutex = new ReentrantLock();
@@ -31,7 +29,7 @@ public class BarrierImpl implements Barrier {
                 npass = 0; // Reset barriera
                 c.signalAll();
             }
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
 
         } finally {
             mutex.unlock();

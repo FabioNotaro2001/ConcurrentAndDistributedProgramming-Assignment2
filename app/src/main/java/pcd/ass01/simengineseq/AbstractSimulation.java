@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pcd.ass01.simtrafficbase.CarAgentThread;
+import pcd.ass01.simtrafficbase.CarsThreadsSupervisor;
 
 
 /**
@@ -14,10 +15,10 @@ public abstract class AbstractSimulation {
 
 	/* environment of the simulation */
 	private AbstractEnvironment env;
-	
+		
 	/* list of the agents */
 	private List<AbstractAgent> agents;
-	
+		
 	/* simulation listeners */
 	private List<SimulationListener> listeners;
 
@@ -71,21 +72,12 @@ public abstract class AbstractSimulation {
 
 		env.setnSteps(numSteps);
 		env.init();
-		for (var a: agents) {
-			a.init(env);
-		}
+		
 
 		this.notifyReset(t, agents, env);
 		
 		long timePerStep = 0;
 		int nSteps = 0;
-
-		List<Thread> list = new ArrayList<>();
-		for(int i=0; i < agents.size(); i++){
-			Thread th = new CarAgentThread(agents.get(i), dt, numSteps, nStepsPerSec, this);
-			list.add(th);
-			th.start();
-		}
 
 		while (nSteps < numSteps && !isStopped()) {	// Added condition for stop button pressed.
 
@@ -95,7 +87,7 @@ public abstract class AbstractSimulation {
 			
 			t += dt;
 			
-			notifyNewStep(t, agents, env);
+			notifyNewStep(t, agents, env);	// TODO: questo va fatto nel Supervisor
 
 			nSteps++;			
 			timePerStep += System.currentTimeMillis() - currentWallTime;
@@ -104,15 +96,6 @@ public abstract class AbstractSimulation {
 				syncWithWallTime();
 			}
 		}
-
-		// When the simulation is over or stopped the car threads must be joined.
-		list.forEach(x -> {
-			try {
-				x.join();
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-		});
 		
 		endWallTime = System.currentTimeMillis();
 		this.averageTimePerStep = timePerStep / numSteps;
@@ -145,7 +128,7 @@ public abstract class AbstractSimulation {
 		this.env = env;
 	}
 
-	protected void addAgent(AbstractAgent agent) {
+	protected void addAgent(AbstractAgent agent) {	// TODO: modifica per interagire con il Supervisor
 		agents.add(agent);
 	}
 	

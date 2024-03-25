@@ -2,6 +2,8 @@ package pcd.ass01.simtrafficbase;
 
 import java.util.Optional;
 
+import pcd.ass01.simengineseq.AbstractEnvironment;
+
 /**
  * 
  * Basic Car behaviour, considering only the presence
@@ -30,8 +32,9 @@ public class CarAgentBasic extends CarAgent {
 					double initialPos, 
 					double acc, 
 					double dec,
-					double vmax) {
-		super(id, env, road, initialPos, acc, dec, vmax);
+					double vmax,
+					Barrier barrier) {
+		super(id, env, road, initialPos, acc, dec, vmax, barrier);
 		state = CarAgentState.STOPPED;
 	}
 	

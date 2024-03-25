@@ -28,12 +28,9 @@ public abstract class AbstractAgent {
 		this.env = env;
 	}
 	
-	/**
-	 * This method is called at each step of the simulation
-	 * 
-	 * @param dt - logical time step
-	 */
-	abstract public void step(int dt);
+	abstract public void senseAndDecide(int dt);
+	
+	abstract public void act();
 	
 
 	public String getId() {

@@ -38,36 +38,22 @@ public abstract class CarAgent extends AbstractAgent {
 		this.barrier = barrier;
 		env.registerNewCar(this, road, initialPos);
 	}
-
-	/**
-	 * 
-	 * Basic behaviour of a car agent structured into a sense/decide/act structure 
-	 * 
-	 */
-	public void step(int dt) {
-
-		this.barrier.waitBeforeActing(); // Aspettiamo che tutti abbiano fatto l'act prima di andare avanti
-
-		/* sense */
-
+	
+	public void senseAndDecide(int dt) {
 		AbstractEnvironment env = this.getEnv();		
 		currentPercept = (CarPercept) env.getCurrentPercepts(getId());			
 
 		/* decide */
-		
 		selectedAction = Optional.empty();
-		
 		decide(dt);
+	}
 
-		this.barrier.waitBeforeActing(); // Aspettiamko che tutti abbiano deciso la mossa da fare prima di andare avanti
-		
-		/* act */
-		
+	public void act() {
 		if (selectedAction.isPresent()) {
-			env.doAction(getId(), selectedAction.get());
+			this.getEnv().doAction(getId(), selectedAction.get());
 		}
 	}
-	
+
 	/**
 	 * 
 	 * Base method to define the behaviour strategy of the car
