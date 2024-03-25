@@ -9,7 +9,13 @@ public class CarsThreadsSupervisor {
     private final int nThreads;
     private RoadsEnv env;
     private final List<CarsThread> carsThreads;
+    /**
+     * Barrier for coordinating threads on when to act.
+     */
     private final Barrier actBarrier;
+    /**
+     * Barrier for coordinating with the threads on when they can perform a step.
+     */
     private final Barrier stepBarrier;
     private AbstractSimulation simulation;
     private int nStepsPerSec = 1;
