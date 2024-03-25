@@ -20,17 +20,22 @@ public abstract class CarAgent extends AbstractAgent {
 	/* percept and action retrieved and submitted at each step */
 	protected CarPercept currentPercept;
 	protected Optional<Action> selectedAction;
+
+	// Our barriers
+	protected final Barrier barrier;
 	
 	
 	public CarAgent(String id, RoadsEnv env, Road road, 
 			double initialPos, 
 			double acc, 
 			double dec,
-			double vmax) {
+			double vmax,
+			Barrier barrier) {
 		super(id);
 		this.acceleration = acc;
 		this.deceleration = dec;
 		this.maxSpeed = vmax;
+		this.barrier = barrier;
 		env.registerNewCar(this, road, initialPos);
 	}
 
@@ -39,7 +44,9 @@ public abstract class CarAgent extends AbstractAgent {
 	 * Basic behaviour of a car agent structured into a sense/decide/act structure 
 	 * 
 	 */
-	public synchronized void step(int dt) {
+	public void step(int dt) {
+
+		this.barrier.waitBeforeActing(); // Aspettiamo che tutti abbiano fatto l'act prima di andare avanti
 
 		/* sense */
 
@@ -51,6 +58,8 @@ public abstract class CarAgent extends AbstractAgent {
 		selectedAction = Optional.empty();
 		
 		decide(dt);
+
+		this.barrier.waitBeforeActing(); // Aspettiamko che tutti abbiano deciso la mossa da fare prima di andare avanti
 		
 		/* act */
 		
