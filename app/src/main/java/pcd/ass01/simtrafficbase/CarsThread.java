@@ -37,16 +37,17 @@ public class CarsThread extends Thread {
 
     public void step() {
         this.carAgents.forEach(car -> car.senseAndDecide(this.dt));
-        System.out.println("sense");
         barrier.waitBeforeActing();             // Attende che tutti i thread abbiano preso le decisioni.
-        System.out.println("act");
+
 
         this.carAgents.forEach(car -> car.act());
     }
 
     public void run() {
         while(!interrupted) {
+
             stepBarrier.waitBeforeActing();     // Attende l'ok per eseguire il passo.
+
             if (interrupted) {
                 return;
             }

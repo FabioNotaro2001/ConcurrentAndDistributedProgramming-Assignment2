@@ -9,7 +9,8 @@ public class RunTrafficSimulation {
 
 	public static void main(String[] args) {		
 
-		int nThreads = 8;
+		int nThreads = Runtime.getRuntime().availableProcessors() - 2;	// TODO: -2 VA BENE?
+		System.err.println("Numero Thread = "+ nThreads);
 		//var simulation = new TrafficSimulationSingleRoadTwoCars(nThreads);
 		var simulation = new TrafficSimulationSingleRoadSeveralCars(nThreads);
 		//var simulation = new TrafficSimulationSingleRoadWithTrafficLightTwoCars(nThreads);

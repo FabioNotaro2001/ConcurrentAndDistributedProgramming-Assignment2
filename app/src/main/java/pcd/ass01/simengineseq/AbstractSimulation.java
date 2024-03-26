@@ -80,13 +80,11 @@ public abstract class AbstractSimulation {
 
 		while (nSteps < numSteps && !isStopped()) {	// Added condition for stop button pressed.
 
-			currentWallTime = System.currentTimeMillis();
+			//currentWallTime = System.currentTimeMillis();
 		
 			/* make a step */
 			
 			t += dt;
-			
-			notifyNewStep(t, agents, env);	// TODO: questo va fatto nel Supervisor
 
 			nSteps++;			
 			timePerStep += System.currentTimeMillis() - currentWallTime;
@@ -169,5 +167,9 @@ public abstract class AbstractSimulation {
 
 	public synchronized void stop(){
 		this.stopRequested = true;
+	}
+
+	public void notifySimulationStep(int t){
+		notifyNewStep(t, agents, env);	// TODO: questo va fatto nel Supervisor
 	}
 }

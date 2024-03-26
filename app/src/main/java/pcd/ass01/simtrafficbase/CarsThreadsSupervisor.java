@@ -25,6 +25,8 @@ public class CarsThreadsSupervisor {
     private int nStepsPerSec = 1;
     private int nSteps = 0;
     private int dt = Integer.MAX_VALUE;
+
+    private int t0;
     
     /* for time statistics*/
 	private long currentWallTime;
@@ -41,7 +43,8 @@ public class CarsThreadsSupervisor {
         this.env = env;
     }
 
-    public void setTimings(int dt) {
+    public void setTimings(int t0, int dt) {
+        this.t0 = t0;
         this.dt = dt;
     }
 
@@ -76,14 +79,29 @@ public class CarsThreadsSupervisor {
 		carsThreads.forEach(th -> th.initCars(this.env));
 		carsThreads.forEach(th -> th.start());
 
-        int stepsDone = 0;
-        while (stepsDone < this.nSteps && !this.simulation.isStopped()) {
-            this.stepBarrier.waitBeforeActing();    // Avvia l'inizio del passo.
-            syncWithWallTime();
-            stepsDone++;
-        }
-        this.stopAllThreads();
-        this.stepBarrier.waitBeforeActing();        // Avvia il passo di terminazione.
+        new Thread(() -> {
+            int stepsDone = 0;
+            int t = this.t0;
+            while (stepsDone < this.nSteps && !this.simulation.isStopped()) {
+
+                this.stepBarrier.waitBeforeActing();    // Avvia l'inizio del passo.
+                t += this.dt;
+                currentWallTime = System.currentTimeMillis();
+                this.simulation.notifySimulationStep(t);
+
+                syncWithWallTime();
+                //try {
+                    //Thread.sleep(500);
+                //} catch (InterruptedException e) {
+                //throw new RuntimeException(e);
+                //}
+                stepsDone++;
+            }
+            this.stopAllThreads();
+            this.stepBarrier.waitBeforeActing();        // Avvia il passo di terminazione.
+        }).start();
+
+
     }
 
     public void stopAllThreads() {

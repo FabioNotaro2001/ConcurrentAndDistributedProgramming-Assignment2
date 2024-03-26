@@ -25,7 +25,7 @@ public class BarrierImpl implements Barrier {
             nWait++;
             if (nWait < nThreads) {
                 do {
-                    //System.out.println("Waiting");
+
                     c.await();
                 } while (nPassed == 0);
             } else {
@@ -36,9 +36,7 @@ public class BarrierImpl implements Barrier {
             // if (nPassed == nThreads) {
             //     nPassed = 0;
             // }
-            nPassed = (nPassed + 1) % nThreads; 
-
-            System.out.println("unlock");
+            nPassed = (nPassed + 1) % nThreads;
 
         } catch (InterruptedException e) {
 

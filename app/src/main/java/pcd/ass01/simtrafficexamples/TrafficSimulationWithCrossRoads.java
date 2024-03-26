@@ -72,7 +72,7 @@ public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 	@Override
 	protected void setupTimings(int t0, int dt) {
 		super.setupTimings(t0, dt);
-		this.supervisor.setTimings(dt);
+		this.supervisor.setTimings(t0, dt);
 	}
 
 	@Override

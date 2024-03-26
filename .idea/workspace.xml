@@ -6,12 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="d3bc9241-8876-4eaf-b605-fa84d1c3578e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build/tmp/compileJava/compileTransaction/stash-dir/RunTrafficSimulation.class.uniqueId0" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/tmp/compileJava/compileTransaction/stash-dir/RunTrafficSimulation.class.uniqueId0" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simengineseq/AbstractSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simengineseq/AbstractSimulation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarAgentThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarAgentThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/RoadsEnv.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/RoadsEnv.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/TrafficLightThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/TrafficLightThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RoadSimView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RoadSimView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/BarrierImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/BarrierImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarsThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarsThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarsThreadsSupervisor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarsThreadsSupervisor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RunTrafficSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RunTrafficSimulation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadMassiveNumberOfCars.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadMassiveNumberOfCars.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadSeveralCars.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadSeveralCars.java" afterDir="false" />
@@ -29,6 +29,18 @@
       <ProjectState />
     </projectState>
   </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -44,17 +56,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/fabio/Desktop/Concurrent-Agent-based-Simulations",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
+    <configuration name="RunTrafficSimulation" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="pcd.ass01.simtrafficexamples.RunTrafficSimulation" />
+      <module name="pcd-2023-2024.app.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="pcd.ass01.simtrafficexamples.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="JetRunConfigurationType">
       <module name="Concurrent-Agent-based-Simulations" />
       <method v="2">
@@ -68,6 +94,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.RunTrafficSimulation" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
