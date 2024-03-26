@@ -8,7 +8,8 @@ public class BarrierImpl implements Barrier {
     private final int nThreads;
     private ReentrantLock mutex;
     private Condition c;
-    private int npass = 0;
+    private int nWait = 0; // nro Threads bloccati sulla barriera
+    private int nPassed = 0; // nro Threads che hanno passato la barriera
 
     public BarrierImpl(int nThreads){
         this.nThreads = nThreads;
@@ -16,19 +17,29 @@ public class BarrierImpl implements Barrier {
         this.c = mutex.newCondition();
     }
 
+    
     @Override
     public void waitBeforeActing() {
         try {
             mutex.lock();
-            npass++;
-            if (npass < nThreads) {
+            nWait++;
+            if (nWait < nThreads) {
                 do {
+                    //System.out.println("Waiting");
                     c.await();
-                } while (npass < nThreads);
+                } while (nPassed == 0);
             } else {
-                npass = 0; // Reset barriera
+                nWait = 0; // Reset barriera
                 c.signalAll();
             }
+            // nPassed++;
+            // if (nPassed == nThreads) {
+            //     nPassed = 0;
+            // }
+            nPassed = (nPassed + 1) % nThreads; 
+
+            System.out.println("unlock");
+
         } catch (InterruptedException e) {
 
         } finally {
