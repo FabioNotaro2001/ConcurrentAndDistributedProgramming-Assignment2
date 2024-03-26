@@ -32,9 +32,8 @@ public class CarAgentBasic extends CarAgent {
 					double initialPos, 
 					double acc, 
 					double dec,
-					double vmax,
-					Barrier barrier) {
-		super(id, env, road, initialPos, acc, dec, vmax, barrier);
+					double vmax) {
+		super(id, env, road, initialPos, acc, dec, vmax);
 		state = CarAgentState.STOPPED;
 	}
 	

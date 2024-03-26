@@ -3,7 +3,6 @@ package pcd.ass01.simengineseq;
 import java.util.ArrayList;
 import java.util.List;
 
-import pcd.ass01.simtrafficbase.CarAgentThread;
 import pcd.ass01.simtrafficbase.CarsThreadsSupervisor;
 
 

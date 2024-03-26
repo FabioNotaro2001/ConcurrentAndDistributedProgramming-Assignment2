@@ -22,23 +22,25 @@ public abstract class CarAgent extends AbstractAgent {
 	protected Optional<Action> selectedAction;
 
 	// Our barriers
-	protected final Barrier barrier;
+	protected Barrier barrier;
 	
 	
 	public CarAgent(String id, RoadsEnv env, Road road, 
 			double initialPos, 
 			double acc, 
 			double dec,
-			double vmax,
-			Barrier barrier) {
+			double vmax) {
 		super(id);
 		this.acceleration = acc;
 		this.deceleration = dec;
 		this.maxSpeed = vmax;
-		this.barrier = barrier;
 		env.registerNewCar(this, road, initialPos);
 	}
 	
+	public void setBarrier(Barrier barrier){
+		this.barrier = barrier;
+	}
+
 	public void senseAndDecide(int dt) {
 		AbstractEnvironment env = this.getEnv();		
 		currentPercept = (CarPercept) env.getCurrentPercepts(getId());			

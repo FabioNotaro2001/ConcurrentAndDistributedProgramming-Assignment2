@@ -3,6 +3,10 @@ package pcd.ass01.simtrafficbase;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.html.HTMLDocument.Iterator;
+
+import com.google.common.collect.Iterables;
+
 import pcd.ass01.simengineseq.AbstractSimulation;
 
 public class CarsThreadsSupervisor {
@@ -49,46 +53,36 @@ public class CarsThreadsSupervisor {
         this.nStepsPerSec = nStepsPerSec;
     }
 
-    public void createCars(int nCars, Road road, double initialPos, double deltaPos, double carAcceleration, double carDeceleration, double carMaxSpeed) {
-        int carsPerThread = nThreads / nCars;
-        int remainingCars = nThreads % nCars;
-        int carId = 0;
+    public void createCars(List<CarAgent> cars) {
+        var iter = cars.iterator();
+        int carsPerThread = cars.size() / nThreads;
+        int remainingCars = cars.size() % nThreads;
         for (int i = 0; i < nThreads; i++) {
             CarsThread th = new CarsThread(actBarrier, stepBarrier, dt);
             carsThreads.add(th);
-            for (int j = 0; j < carsPerThread; j++, carId++) {
-                th.addCar(new CarAgentBasic("car" + carId, env, road, 
-                                            initialPos + deltaPos * carId, 
-                                            carAcceleration, 
-                                            carDeceleration, 
-                                            carMaxSpeed, 
-                                            actBarrier));
+            for (int j = 0; j < carsPerThread; j++) {
+                th.addCar(iter.next());
             }
         }
-        for (int i = 0; i < remainingCars; i++) {
+        for (int i = 0; i < 1; i++) {
             CarsThread th = carsThreads.getLast();
-            for (int j = 0; j < carsPerThread; j++, carId++) {
-                th.addCar(new CarAgentBasic("car" + carId, env, road, 
-                                            initialPos + deltaPos * carId, 
-                                            carAcceleration, 
-                                            carDeceleration, 
-                                            carMaxSpeed, 
-                                            actBarrier));
+            for (int j = 0; j < remainingCars; j++) {
+                th.addCar(iter.next());
             }
         }
     }
 
     public void runAllThreads() {
 		carsThreads.forEach(th -> th.initCars(this.env));
+		carsThreads.forEach(th -> th.start());
 
         int stepsDone = 0;
         while (stepsDone < this.nSteps && !this.simulation.isStopped()) {
             this.stepBarrier.waitBeforeActing();    // Avvia l'inizio del passo.
-            this.stepBarrier.waitBeforeActing();    // Attende il completamento del passo.
             syncWithWallTime();
             stepsDone++;
         }
-        this.carsThreads.forEach(th -> th.requestInterrupt());
+        this.stopAllThreads();
         this.stepBarrier.waitBeforeActing();        // Avvia il passo di terminazione.
     }
 

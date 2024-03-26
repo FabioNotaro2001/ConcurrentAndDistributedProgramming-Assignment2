@@ -1,8 +1,12 @@
 package pcd.ass01.simtrafficexamples;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import pcd.ass01.simengineseq.AbstractSimulation;
 import pcd.ass01.simtrafficbase.CarAgent;
 import pcd.ass01.simtrafficbase.CarAgentBasic;
+import pcd.ass01.simtrafficbase.CarsThreadsSupervisor;
 import pcd.ass01.simtrafficbase.P2d;
 import pcd.ass01.simtrafficbase.Road;
 import pcd.ass01.simtrafficbase.RoadsEnv;
@@ -10,10 +14,12 @@ import pcd.ass01.simtrafficbase.RoadsEnv;
 public class TrafficSimulationSingleRoadMassiveNumberOfCars extends AbstractSimulation {
 
 	private int numCars;
+	private final CarsThreadsSupervisor supervisor;
 	
-	public TrafficSimulationSingleRoadMassiveNumberOfCars(int numCars) {
+	public TrafficSimulationSingleRoadMassiveNumberOfCars(int numCars, int nThreads) {
 		super();
 		this.numCars = numCars;
+		supervisor = new CarsThreadsSupervisor(nThreads, this);
 	}
 	
 	public void setup() {
@@ -24,6 +30,8 @@ public class TrafficSimulationSingleRoadMassiveNumberOfCars extends AbstractSimu
 		this.setupTimings(0, 1);
 
 		Road road = env.createRoad(new P2d(0,300), new P2d(15000,300));
+
+		List<CarAgent> cars = new ArrayList<>();
 
 		for (int i = 0; i < numCars; i++) {
 			
@@ -39,11 +47,43 @@ public class TrafficSimulationSingleRoadMassiveNumberOfCars extends AbstractSimu
 									carAcceleration, 
 									carDeceleration,
 									carMaxSpeed);
+			
+			cars.add(car);
+			
 			this.addAgent(car);
 			
 			/* no sync with wall-time */
 		}
-		
+		supervisor.createCars(cars);
 	}	
+	@Override
+	public void run(int nSteps) {
+		this.supervisor.setSteps(nSteps);
+		this.supervisor.runAllThreads();
+		super.run(nSteps);
+	}
+
+	@Override
+	protected void setupTimings(int t0, int dt) {
+		super.setupTimings(t0, dt);
+		this.supervisor.setTimings(dt);
+	}
+
+	@Override
+	protected void syncWithTime(int nCyclesPerSec) {
+		super.syncWithTime(nCyclesPerSec);
+		this.supervisor.setStepsPerSec(nCyclesPerSec);
+	}
+
+	protected void setupEnvironment(RoadsEnv env) {
+		super.setupEnvironment(env);
+		this.supervisor.setEnvironment(env);
+	}
+
+	@Override
+	public synchronized void stop() {
+		super.stop();
+		this.supervisor.stopAllThreads();
+	}
 }
 	
