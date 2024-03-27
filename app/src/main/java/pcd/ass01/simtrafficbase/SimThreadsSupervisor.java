@@ -68,6 +68,10 @@ public class SimThreadsSupervisor {
             for (int j = 0; j < carsPerThread; j++) {
                 th.addCar(iter.next());
             }
+            if (remainingCars > 0) {            // If the cars cannot be evenly distributed on all threads, the remaining ones are distributed each to a different thread.
+                remainingCars--;
+                th.addCar(iter.next());
+            }
         }
         CarsThread th = carsThreads.getLast();
         for (int j = 0; j < remainingCars; j++) {
@@ -85,10 +89,10 @@ public class SimThreadsSupervisor {
             for (int j = 0; j < lightsPerThread; j++) {
                 th.addTrafficLight(iter.next());
             }
-        }
-        TrafficLightsThread th = trafficLightsThreads.getLast();
-        for (int j = 0; j < remainingLights; j++) {
-            th.addTrafficLight(iter.next());
+            if (remainingLights > 0) {              // If the traffic lights cannot be evenly distributed on all threads, the remaining ones are distributed each to a different thread.
+                th.addTrafficLight(iter.next());
+                remainingLights--;
+            }
         }
     }
 
