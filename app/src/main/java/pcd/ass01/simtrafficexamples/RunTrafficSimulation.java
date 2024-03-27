@@ -9,12 +9,12 @@ public class RunTrafficSimulation {
 
 	public static void main(String[] args) {		
 
-		int nThreads = Runtime.getRuntime().availableProcessors() - 2;	// TODO: -2 VA BENE?
-		System.err.println("Numero Thread = "+ nThreads);
+		int nThreads = Runtime.getRuntime().availableProcessors() - 2;	// -2 per GUI e supervisor.// TODO: -2 VA BENE?
+		System.err.println("Numero Thread = " + nThreads);
 		//var simulation = new TrafficSimulationSingleRoadTwoCars(nThreads);
-		var simulation = new TrafficSimulationSingleRoadSeveralCars(nThreads);
+		//var simulation = new TrafficSimulationSingleRoadSeveralCars(nThreads);
 		//var simulation = new TrafficSimulationSingleRoadWithTrafficLightTwoCars(nThreads);
-		//var simulation = new TrafficSimulationWithCrossRoads(nThreads);
+		var simulation = new TrafficSimulationWithCrossRoads(nThreads);
 		simulation.setup();
 		
 		RoadSimStatistics stat = new RoadSimStatistics();

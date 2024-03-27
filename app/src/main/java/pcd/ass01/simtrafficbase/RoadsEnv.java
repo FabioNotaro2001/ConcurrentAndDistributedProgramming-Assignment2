@@ -12,7 +12,7 @@ import pcd.ass01.simengineseq.Percept;
 
 public class RoadsEnv extends AbstractEnvironment {
 		
-	private static final int MIN_DIST_ALLOWED = 10;
+	private static final int MIN_DIST_ALLOWED = 5;
 	private static final int CAR_DETECTION_RANGE = 30;
 	private static final int SEM_DETECTION_RANGE = 30;
 	
@@ -29,8 +29,6 @@ public class RoadsEnv extends AbstractEnvironment {
 
 	private Boolean flagInit = true; //true if trafficlight has to be initializated
 
-	List<TrafficLightThread> trafficLightThreads = new ArrayList<>();
-
 	public RoadsEnv(AbstractSimulation simulation) {
 		super("traffic-env");
 		registeredCars = new HashMap<>();	
@@ -45,9 +43,6 @@ public class RoadsEnv extends AbstractEnvironment {
 			//evitare che si riinizializzi quando si ripreme start
 			if (flagInit)
 				tl.init();
-			TrafficLightThread trafficLightThread = new TrafficLightThread(tl, this.getDt(), this.getnSteps(), this.getCyclesPerSec(), simulation);
-			trafficLightThread.start();
-			trafficLightThreads.add(trafficLightThread);
 		}
 		flagInit = false;
 	}

@@ -7,7 +7,7 @@ import java.util.Random;
 import pcd.ass01.simengineseq.AbstractSimulation;
 import pcd.ass01.simtrafficbase.CarAgent;
 import pcd.ass01.simtrafficbase.CarAgentExtended;
-import pcd.ass01.simtrafficbase.CarsThreadsSupervisor;
+import pcd.ass01.simtrafficbase.SimThreadsSupervisor;
 import pcd.ass01.simtrafficbase.P2d;
 import pcd.ass01.simtrafficbase.Road;
 import pcd.ass01.simtrafficbase.RoadsEnv;
@@ -15,12 +15,12 @@ import pcd.ass01.simtrafficbase.TrafficLight;
 
 public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 
-	private final CarsThreadsSupervisor supervisor;
+	private final SimThreadsSupervisor supervisor;
 
 
 	public TrafficSimulationWithCrossRoads(int nThreads) {
 		super();
-		this.supervisor = new CarsThreadsSupervisor(nThreads, this);
+		this.supervisor = new SimThreadsSupervisor(nThreads, 2, this);
 	}
 	
 	public void setup() {
@@ -38,6 +38,7 @@ public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 		r1.addTrafficLight(tl1, 740);
 		
 		List<CarAgent> cars = new ArrayList<>();
+		List<TrafficLight> lights = new ArrayList<>();
 
 		CarAgent car1 = new CarAgentExtended("car-1", env, r1, 0, 0.1, 0.3, 6);
 		this.addAgent(car1);		
@@ -58,7 +59,12 @@ public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 		cars.add(car2);
 		cars.add(car3);
 		cars.add(car4);
+
+		lights.add(tl1);
+		lights.add(tl2);
+
 		supervisor.createCars(cars);
+		supervisor.createTrafficLights(lights);
 
 		this.syncWithTime(25);
 	}	
@@ -66,6 +72,7 @@ public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 	@Override
 	public void run(int nSteps) {
 		this.supervisor.setSteps(nSteps);
+		this.supervisor.runAllThreads();
 		super.run(nSteps);
 	}
 

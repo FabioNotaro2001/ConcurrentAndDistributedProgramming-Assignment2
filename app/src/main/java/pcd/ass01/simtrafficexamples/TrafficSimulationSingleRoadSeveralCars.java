@@ -3,11 +3,10 @@ package pcd.ass01.simtrafficexamples;
 import java.util.ArrayList;
 import java.util.List;
 
-import pcd.ass01.simengineseq.AbstractAgent;
 import pcd.ass01.simengineseq.AbstractSimulation;
 import pcd.ass01.simtrafficbase.CarAgent;
 import pcd.ass01.simtrafficbase.CarAgentBasic;
-import pcd.ass01.simtrafficbase.CarsThreadsSupervisor;
+import pcd.ass01.simtrafficbase.SimThreadsSupervisor;
 import pcd.ass01.simtrafficbase.P2d;
 import pcd.ass01.simtrafficbase.Road;
 import pcd.ass01.simtrafficbase.RoadsEnv;
@@ -20,11 +19,11 @@ import pcd.ass01.simtrafficbase.RoadsEnv;
  */
 public class TrafficSimulationSingleRoadSeveralCars extends AbstractSimulation {
 
-	private final CarsThreadsSupervisor supervisor;
+	private final SimThreadsSupervisor supervisor;
 
 	public TrafficSimulationSingleRoadSeveralCars(int nThreads) {
 		super();
-		this.supervisor = new CarsThreadsSupervisor(nThreads, this);
+		this.supervisor = new SimThreadsSupervisor(nThreads, 0, this);
 	}
 	
 	public void setup() {

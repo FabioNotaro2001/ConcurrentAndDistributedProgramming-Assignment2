@@ -38,9 +38,8 @@ public class CarsThread extends Thread {
     public void step() {
         this.carAgents.forEach(car -> car.senseAndDecide(this.dt));
         barrier.waitBeforeActing();             // Attende che tutti i thread abbiano preso le decisioni.
-
-
         this.carAgents.forEach(car -> car.act());
+        //barrier.waitBeforeActing();             // Attende che i semafori abbiano fatto il loro step prima di proseguire.
     }
 
     public void run() {
@@ -51,6 +50,7 @@ public class CarsThread extends Thread {
             if (interrupted) {
                 return;
             }
+
             this.step();
         }
     }

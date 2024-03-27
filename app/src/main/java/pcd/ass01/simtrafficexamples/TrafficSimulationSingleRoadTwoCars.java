@@ -6,7 +6,7 @@ import java.util.List;
 import pcd.ass01.simengineseq.AbstractSimulation;
 import pcd.ass01.simtrafficbase.CarAgent;
 import pcd.ass01.simtrafficbase.CarAgentBasic;
-import pcd.ass01.simtrafficbase.CarsThreadsSupervisor;
+import pcd.ass01.simtrafficbase.SimThreadsSupervisor;
 import pcd.ass01.simtrafficbase.P2d;
 import pcd.ass01.simtrafficbase.Road;
 import pcd.ass01.simtrafficbase.RoadsEnv;
@@ -18,11 +18,11 @@ import pcd.ass01.simtrafficbase.RoadsEnv;
  */
 public class TrafficSimulationSingleRoadTwoCars extends AbstractSimulation {
 
-	private final CarsThreadsSupervisor supervisor;
+	private final SimThreadsSupervisor supervisor;
 
 	public TrafficSimulationSingleRoadTwoCars(int nThreads) {
 		super();
-		this.supervisor = new CarsThreadsSupervisor(nThreads, this);
+		this.supervisor = new SimThreadsSupervisor(nThreads, 0, this);
 	}
 	
 	public void setup() {
@@ -50,6 +50,7 @@ public class TrafficSimulationSingleRoadTwoCars extends AbstractSimulation {
 
 		supervisor.createCars(cars);
 
+
 		/* sync with wall-time: 25 steps per sec */
 		this.syncWithTime(25);
 	}	
@@ -57,6 +58,7 @@ public class TrafficSimulationSingleRoadTwoCars extends AbstractSimulation {
 	@Override
 	public void run(int nSteps) {
 		this.supervisor.setSteps(nSteps);
+		this.supervisor.runAllThreads();
 		super.run(nSteps);
 	}
 

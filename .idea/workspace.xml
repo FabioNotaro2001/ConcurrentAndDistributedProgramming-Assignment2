@@ -5,13 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3bc9241-8876-4eaf-b605-fa84d1c3578e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/TrafficLightsThread.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build/tmp/compileJava/compileTransaction/stash-dir/RunTrafficSimulation.class.uniqueId0" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/tmp/compileJava/compileTransaction/stash-dir/RunTrafficSimulation.class.uniqueId0" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simengineseq/AbstractSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simengineseq/AbstractSimulation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/BarrierImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/BarrierImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarsThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarsThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarsThreadsSupervisor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarsThreadsSupervisor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarsThreadsSupervisor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/SimThreadsSupervisor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/RoadsEnv.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/RoadsEnv.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/TrafficLightThread.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RunTrafficSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RunTrafficSimulation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadMassiveNumberOfCars.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadMassiveNumberOfCars.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadSeveralCars.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadSeveralCars.java" afterDir="false" />
@@ -41,6 +44,13 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -60,8 +70,9 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/fabio/Desktop/Concurrent-Agent-based-Simulations",
+    "last_opened_file_path": "C:/Users/fabio/Desktop/pcd-2023-2024",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0"

@@ -6,7 +6,7 @@ import java.util.List;
 import pcd.ass01.simengineseq.AbstractSimulation;
 import pcd.ass01.simtrafficbase.CarAgent;
 import pcd.ass01.simtrafficbase.CarAgentBasic;
-import pcd.ass01.simtrafficbase.CarsThreadsSupervisor;
+import pcd.ass01.simtrafficbase.SimThreadsSupervisor;
 import pcd.ass01.simtrafficbase.P2d;
 import pcd.ass01.simtrafficbase.Road;
 import pcd.ass01.simtrafficbase.RoadsEnv;
@@ -14,12 +14,12 @@ import pcd.ass01.simtrafficbase.RoadsEnv;
 public class TrafficSimulationSingleRoadMassiveNumberOfCars extends AbstractSimulation {
 
 	private int numCars;
-	private final CarsThreadsSupervisor supervisor;
+	private final SimThreadsSupervisor supervisor;
 	
 	public TrafficSimulationSingleRoadMassiveNumberOfCars(int numCars, int nThreads) {
 		super();
 		this.numCars = numCars;
-		supervisor = new CarsThreadsSupervisor(nThreads, this);
+		supervisor = new SimThreadsSupervisor(nThreads, 0, this);
 	}
 	
 	public void setup() {
