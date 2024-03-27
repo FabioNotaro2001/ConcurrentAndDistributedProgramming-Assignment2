@@ -23,21 +23,22 @@ public class TrafficLightsThread extends Thread{
     public void requestInterrupt() {
         this.interrupted = true;
     }
-
+    
     public void addTrafficLight(TrafficLight tl) {
         this.trafficLights.add(tl);
     }
 
-    public void initTrafficLight(AbstractEnvironment env) {
+    public void initTrafficLights(AbstractEnvironment env) {
         for (var a: trafficLights) {
             a.init();
         }
     }
 
     public void step() {
+        this.trafficLights.forEach(tl -> tl.step(this.dt)); // Il loro step viene così fatto in contemporanea alla fase act delle macchinine.
+        barrier.waitBeforeActing(); // Attende che le macchinine abbiano fatto fase sense/decide
         barrier.waitBeforeActing(); // Attende che le macchinine abbiano fatto fase sense/decide
         //barrier.waitBeforeActing(); // Attende che le macchinine abbiano fatto act
-        this.trafficLights.forEach(tl -> tl.step(this.dt)); // Il loro step viene così fatto in contemporanea alla fase act delle macchinine.
 
     }
 
@@ -49,7 +50,7 @@ public class TrafficLightsThread extends Thread{
             if (interrupted) {
                 return;
             }
-
+            
             this.step();
         }
     }

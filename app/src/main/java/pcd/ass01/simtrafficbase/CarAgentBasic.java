@@ -2,8 +2,6 @@ package pcd.ass01.simtrafficbase;
 
 import java.util.Optional;
 
-import pcd.ass01.simengineseq.AbstractEnvironment;
-
 /**
  * 
  * Basic Car behaviour, considering only the presence

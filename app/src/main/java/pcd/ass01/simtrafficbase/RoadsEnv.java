@@ -120,7 +120,7 @@ public class RoadsEnv extends AbstractEnvironment {
 				info.updatePos(pos + mv.distance());
 			}
 
-			if (pos > road.getLen()) {
+			if (info.getPos() > road.getLen()) { // Account for updated position.
 				info.updatePos(0);
 			}
 			break;

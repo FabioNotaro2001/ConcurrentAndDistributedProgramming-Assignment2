@@ -13,7 +13,7 @@ public class RunTrafficSimulation {
 		System.err.println("Numero Thread = " + nThreads);
 		//var simulation = new TrafficSimulationSingleRoadTwoCars(nThreads);
 		//var simulation = new TrafficSimulationSingleRoadSeveralCars(nThreads);
-		//var simulation = new TrafficSimulationSingleRoadWithTrafficLightTwoCars(nThreads);
+		// var simulation = new TrafficSimulationSingleRoadWithTrafficLightTwoCars(nThreads);
 		var simulation = new TrafficSimulationWithCrossRoads(nThreads);
 		simulation.setup();
 		

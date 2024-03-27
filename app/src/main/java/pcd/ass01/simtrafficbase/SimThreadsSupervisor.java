@@ -93,12 +93,15 @@ public class SimThreadsSupervisor {
     }
 
     public void runAllThreads() {
-		carsThreads.forEach(th -> th.initCars(this.env));
-		carsThreads.forEach(th -> th.start());
-
-        trafficLightsThreads.forEach(th -> th.initTrafficLight(this.env));
-        trafficLightsThreads.forEach(th -> th.start());
-
+		carsThreads.forEach(th -> {
+            th.initCars(this.env);
+            th.start();
+        });
+        
+        trafficLightsThreads.forEach(th -> {
+            th.initTrafficLights(this.env);
+            th.start();
+        });
 
 
         new Thread(() -> {
@@ -119,6 +122,7 @@ public class SimThreadsSupervisor {
                 //}
                 stepsDone++;
             }
+
             this.stopAllThreads();
             this.stepBarrier.waitBeforeActing();        // Avvia il passo di terminazione.
         }).start();

@@ -56,7 +56,7 @@ public class TrafficSimulationSingleRoadWithTrafficLightTwoCars extends Abstract
 		supervisor.createCars(cars);
 		supervisor.createTrafficLights(lights);
 
-		this.syncWithTime(25);
+		this.syncWithTime(60);
 	}	
 	
 	@Override
