@@ -54,10 +54,9 @@ public class RoadSimView extends JFrame implements SimulationListener {
 				try {
 					int wishedSteps = Integer.parseInt(stepsTextField.getText());
 
-					// Starts the simulation into a separated thread so that the GUI doesn't get stuck.
-					new Thread(() -> {
-						simulation.run(wishedSteps);
-					}).start();
+					simulation.setup();
+					simulation.run(wishedSteps);
+
 					buttonStart.setEnabled(false);
 					buttonStop.setEnabled(true);
 				} catch (Exception ex) {

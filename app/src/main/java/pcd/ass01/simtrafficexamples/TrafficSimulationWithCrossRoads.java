@@ -66,7 +66,7 @@ public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 		supervisor.createCars(cars);
 		supervisor.createTrafficLights(lights);
 
-		this.syncWithTime(60);
+		this.syncWithTime(25);
 	}	
 	
 	@Override

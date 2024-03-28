@@ -53,7 +53,7 @@ public abstract class AbstractSimulation {
 	 * Method used to configure the simulation, specifying env and agents
 	 * 
 	 */
-	protected abstract void setup();
+	public abstract void setup();
 	
 	/**
 	 * Method running the simulation for a number of steps,
@@ -125,7 +125,7 @@ public abstract class AbstractSimulation {
 		this.env = env;
 	}
 
-	protected void addAgent(AbstractAgent agent) {	// TODO: modifica per interagire con il Supervisor
+	protected void addAgent(AbstractAgent agent) {
 		agents.add(agent);
 	}
 	
@@ -175,6 +175,7 @@ public abstract class AbstractSimulation {
 	}
 
 	public void notifySimulationStep(int t){
-		notifyNewStep(t, agents, env);	// TODO: questo va fatto nel Supervisor
+		notifyNewStep(t, agents, env);
 	}
+
 }

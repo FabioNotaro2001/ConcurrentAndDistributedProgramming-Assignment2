@@ -1,6 +1,6 @@
 package pcd.ass01.simengineseq;
 
-// TODO: Gli elementi dell'environment devono essere Thread a loro volta
+
 
 /**
  *   

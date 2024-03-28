@@ -59,6 +59,7 @@ public class SimThreadsSupervisor {
     }
 
     public void createCars(List<CarAgent> cars) {
+        this.carsThreads.clear();
         var iter = cars.iterator();
         int carsPerThread = cars.size() / nThreadsForCars;
         int remainingCars = cars.size() % nThreadsForCars;
@@ -80,6 +81,7 @@ public class SimThreadsSupervisor {
     }
 
     public void createTrafficLights(List<TrafficLight> trafficLights) {
+        this.trafficLightsThreads.clear();
         var iter = trafficLights.iterator();
         int lightsPerThread = trafficLights.size() / this.nThreadsForTrafficLights;
         int remainingLights = trafficLights.size() % this.nThreadsForTrafficLights;
