@@ -63,7 +63,7 @@ public class SimThreadsSupervisor {
         int carsPerThread = cars.size() / nThreadsForCars;
         int remainingCars = cars.size() % nThreadsForCars;
         for (int i = 0; i < nThreadsForCars; i++) {
-            CarsThread th = new CarsThread(actBarrier, stepBarrier, dt);
+            CarsThread th = new CarsThread(actBarrier, stepBarrier, dt, simulation);
             carsThreads.add(th);
             for (int j = 0; j < carsPerThread; j++) {
                 th.addCar(iter.next());
@@ -84,7 +84,7 @@ public class SimThreadsSupervisor {
         int lightsPerThread = trafficLights.size() / this.nThreadsForTrafficLights;
         int remainingLights = trafficLights.size() % this.nThreadsForTrafficLights;
         for (int i = 0; i < nThreadsForTrafficLights; i++) {
-            TrafficLightsThread th = new TrafficLightsThread(actBarrier, stepBarrier, dt);
+            TrafficLightsThread th = new TrafficLightsThread(actBarrier, stepBarrier, dt, simulation);
             this.trafficLightsThreads.add(th);
             for (int j = 0; j < lightsPerThread; j++) {
                 th.addTrafficLight(iter.next());
@@ -127,16 +127,11 @@ public class SimThreadsSupervisor {
                 stepsDone++;
             }
 
-            this.stopAllThreads();
+            this.simulation.stop();
             this.stepBarrier.waitBeforeActing();        // Avvia il passo di terminazione.
         }).start();
 
 
-    }
-
-    public void stopAllThreads() {
-        this.carsThreads.forEach(th -> th.requestInterrupt());
-        this.trafficLightsThreads.forEach(th -> th.requestInterrupt());
     }
 
     private void syncWithWallTime() {

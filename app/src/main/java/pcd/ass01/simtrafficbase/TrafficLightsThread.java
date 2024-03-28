@@ -1,6 +1,7 @@
 package pcd.ass01.simtrafficbase;
 
 import pcd.ass01.simengineseq.AbstractEnvironment;
+import pcd.ass01.simengineseq.AbstractSimulation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,19 +10,16 @@ public class TrafficLightsThread extends Thread{
     private final Barrier barrier;
     private final Barrier stepBarrier;
     private final List<TrafficLight> trafficLights;
-    private boolean interrupted = false;
+    private AbstractSimulation simulation;
     private final int dt;
 
-    public TrafficLightsThread(Barrier barrier, Barrier eventBarrier, int dt){
+    public TrafficLightsThread(Barrier barrier, Barrier eventBarrier, int dt, AbstractSimulation simulation){
         super();
         this.barrier = barrier;
         this.stepBarrier = eventBarrier;
         this.trafficLights = new ArrayList<>();
         this.dt = dt;
-    }
-
-    public void requestInterrupt() {
-        this.interrupted = true;
+        this.simulation = simulation;
     }
     
     public void addTrafficLight(TrafficLight tl) {
@@ -42,14 +40,11 @@ public class TrafficLightsThread extends Thread{
 
     }
 
+
     public void run() {
-        while(!interrupted) {
+        while(!simulation.isStopped()) {
 
             stepBarrier.waitBeforeActing();     // Attende l'ok per eseguire il passo.
-
-            if (interrupted) {
-                return;
-            }
             
             this.step();
         }

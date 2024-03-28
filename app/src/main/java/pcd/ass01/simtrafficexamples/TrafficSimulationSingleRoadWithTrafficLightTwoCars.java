@@ -86,6 +86,5 @@ public class TrafficSimulationSingleRoadWithTrafficLightTwoCars extends Abstract
 	@Override
 	public synchronized void stop() {
 		super.stop();
-		this.supervisor.stopAllThreads();
 	}
 }

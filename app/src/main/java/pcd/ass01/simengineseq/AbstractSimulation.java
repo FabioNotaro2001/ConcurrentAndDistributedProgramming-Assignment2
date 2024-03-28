@@ -3,6 +3,9 @@ package pcd.ass01.simengineseq;
 import java.util.ArrayList;
 import java.util.List;
 
+import pcd.ass01.simtrafficbase.SimThreadsSupervisor;
+import pcd.ass01.simtrafficbase.StopMonitor;
+
 
 /**
  * Base class for defining concrete simulations
@@ -36,8 +39,8 @@ public abstract class AbstractSimulation {
 	private long averageTimePerStep;
 
 	// New field that changes when the stop button is pressed.
-	private volatile boolean stopRequested = false;
-
+	private volatile Boolean stopRequested = false;
+	private StopMonitor stopMonitor = new StopMonitor();
 
 	protected AbstractSimulation() {
 		agents = new ArrayList<AbstractAgent>();
@@ -94,7 +97,6 @@ public abstract class AbstractSimulation {
 		
 		endWallTime = System.currentTimeMillis();
 		this.averageTimePerStep = timePerStep / numSteps;
-		
 	}
 	
 	public long getSimulationDuration() {
@@ -159,12 +161,17 @@ public abstract class AbstractSimulation {
 	}
 
 	// Methods synchronized useful to stop the simulation after button stop pressed.
-	public synchronized boolean isStopped(){
-		return this.stopRequested;
+	public boolean isStopped(){
+		this.stopMonitor.requestRead();
+		boolean state = this.stopRequested;
+		this.stopMonitor.releaseRead();
+		return state;
 	}
 
-	public synchronized void stop(){
+	public void stop(){
+		this.stopMonitor.requestWrite();
 		this.stopRequested = true;
+		this.stopMonitor.releaseWrite();
 	}
 
 	public void notifySimulationStep(int t){

@@ -94,8 +94,7 @@ public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 	}
 
 	@Override
-	public synchronized void stop() {
+	public void stop() { 
 		super.stop();
-		this.supervisor.stopAllThreads();
 	}
 }

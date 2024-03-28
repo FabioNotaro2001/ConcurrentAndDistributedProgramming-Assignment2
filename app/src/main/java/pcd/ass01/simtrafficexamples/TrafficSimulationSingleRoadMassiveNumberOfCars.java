@@ -14,16 +14,17 @@ import pcd.ass01.simtrafficbase.RoadsEnv;
 public class TrafficSimulationSingleRoadMassiveNumberOfCars extends AbstractSimulation {
 
 	private int numCars;
-	private final SimThreadsSupervisor supervisor;
+	private SimThreadsSupervisor supervisor;
+	private final int nThreads;
 	
 	public TrafficSimulationSingleRoadMassiveNumberOfCars(int numCars, int nThreads) {
 		super();
 		this.numCars = numCars;
-		supervisor = new SimThreadsSupervisor(nThreads, 0, this);
+		this.nThreads = nThreads;
 	}
 	
 	public void setup() {
-
+		supervisor = new SimThreadsSupervisor(nThreads, 0, this);
 		RoadsEnv env = new RoadsEnv(this);
 		this.setupEnvironment(env);
 		
@@ -83,7 +84,6 @@ public class TrafficSimulationSingleRoadMassiveNumberOfCars extends AbstractSimu
 	@Override
 	public synchronized void stop() {
 		super.stop();
-		this.supervisor.stopAllThreads();
 	}
 }
 	

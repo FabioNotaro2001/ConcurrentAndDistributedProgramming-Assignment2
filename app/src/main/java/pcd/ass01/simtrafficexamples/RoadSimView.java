@@ -69,7 +69,6 @@ public class RoadSimView extends JFrame implements SimulationListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				simulation.stop();
-
 				buttonStart.setEnabled(true);
 				buttonStop.setEnabled(false);
 			}

@@ -4,25 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pcd.ass01.simengineseq.AbstractEnvironment;
+import pcd.ass01.simengineseq.AbstractSimulation;
 
 public class CarsThread extends Thread {
 
     private final Barrier barrier;
     private final Barrier stepBarrier;
     private final List<CarAgent> carAgents;
-    private boolean interrupted = false;
+    private final AbstractSimulation simulation;
     private final int dt;
 
-    public CarsThread(Barrier barrier, Barrier eventBarrier, int dt){
+    public CarsThread(Barrier barrier, Barrier eventBarrier, int dt, AbstractSimulation simulation){
         super();
         this.barrier = barrier;
         this.stepBarrier = eventBarrier;
         this.carAgents = new ArrayList<>();
+        this.simulation = simulation;
         this.dt = dt;
-    }
-
-    public void requestInterrupt() {
-        this.interrupted = true;
     }
 
     public void addCar(CarAgent carAgent) {
@@ -44,13 +42,9 @@ public class CarsThread extends Thread {
     }
 
     public void run() {
-        while(!interrupted) {
+        while(!simulation.isStopped()) {
 
             stepBarrier.waitBeforeActing();     // Attende l'ok per eseguire il passo.
-            
-            if (interrupted) {
-                return;
-            }
 
             this.step();
         }
