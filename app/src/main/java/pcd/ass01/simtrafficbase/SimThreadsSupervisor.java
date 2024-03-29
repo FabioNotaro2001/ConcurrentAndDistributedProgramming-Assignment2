@@ -22,7 +22,7 @@ public class SimThreadsSupervisor {
      */
     private final Barrier stepBarrier;
     private AbstractSimulation simulation;
-    private int nStepsPerSec = 1;
+    private int nStepsPerSec = 0;
     private int nSteps = 0;
     private int dt = Integer.MAX_VALUE;
 
@@ -30,6 +30,8 @@ public class SimThreadsSupervisor {
     
     /* for time statistics*/
 	private long currentWallTime;
+
+    private long totalTime=0;
 
     public SimThreadsSupervisor(int nThreadsForCars, int nThreadsForLights, AbstractSimulation simulation) {
         this.nThreadsForCars = nThreadsForCars;
@@ -99,6 +101,8 @@ public class SimThreadsSupervisor {
     }
 
     public void runAllThreads() {
+
+
 		carsThreads.forEach(th -> {
             th.initCars(this.env);
             th.start();
@@ -111,6 +115,8 @@ public class SimThreadsSupervisor {
 
 
         new Thread(() -> {
+            long startWallTime = System.currentTimeMillis();
+
             int stepsDone = 0;
             int t = this.t0;
             while (stepsDone < this.nSteps && !this.simulation.isStopped()) {
@@ -120,20 +126,29 @@ public class SimThreadsSupervisor {
                 currentWallTime = System.currentTimeMillis();
                 this.simulation.notifySimulationStep(t);
 
-                syncWithWallTime();
-                //try {
-                    //Thread.sleep(500);
-                //} catch (InterruptedException e) {
-                //throw new RuntimeException(e);
-                //}
+                if(nStepsPerSec>0){
+                    syncWithWallTime();
+                }
                 stepsDone++;
             }
 
             this.simulation.stop();
+            System.out.println("simulation thread terminate prima");
+
             this.stepBarrier.waitBeforeActing();        // Avvia il passo di terminazione.
+
+            totalTime = System.currentTimeMillis() - startWallTime;
+            System.out.println(totalTime);
+            System.out.println("simulation thread terminate");
+
         }).start();
 
+        
 
+    }
+
+    public long getTime(){
+        return this.totalTime;
     }
 
     private void syncWithWallTime() {

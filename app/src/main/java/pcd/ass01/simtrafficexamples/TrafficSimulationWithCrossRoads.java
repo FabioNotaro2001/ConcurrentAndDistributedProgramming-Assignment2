@@ -92,9 +92,4 @@ public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 		super.setupEnvironment(env);
 		this.supervisor.setEnvironment(env);
 	}
-
-	@Override
-	public void stop() { 
-		super.stop();
-	}
 }

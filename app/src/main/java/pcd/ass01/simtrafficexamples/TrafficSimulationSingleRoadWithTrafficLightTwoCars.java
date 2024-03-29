@@ -83,8 +83,4 @@ public class TrafficSimulationSingleRoadWithTrafficLightTwoCars extends Abstract
 		this.supervisor.setEnvironment(env);
 	}
 
-	@Override
-	public synchronized void stop() {
-		super.stop();
-	}
 }

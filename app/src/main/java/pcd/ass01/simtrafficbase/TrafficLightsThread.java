@@ -42,11 +42,13 @@ public class TrafficLightsThread extends Thread{
 
 
     public void run() {
-        while(!simulation.isStopped()) {
-
+        while(true) {
             stepBarrier.waitBeforeActing();     // Attende l'ok per eseguire il passo.
-            
+            if(simulation.isStopped())
+                break;
             this.step();
         }
+        System.out.println("thread light terminate");
+
     }
 }

@@ -91,9 +91,5 @@ public class TrafficSimulationSingleRoadSeveralCars extends AbstractSimulation {
 		this.supervisor.setEnvironment(env);
 	}
 
-	@Override
-	public synchronized void stop() {
-		super.stop();
-	}
 }
 	

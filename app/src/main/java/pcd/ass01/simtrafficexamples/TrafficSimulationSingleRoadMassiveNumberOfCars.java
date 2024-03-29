@@ -82,8 +82,9 @@ public class TrafficSimulationSingleRoadMassiveNumberOfCars extends AbstractSimu
 	}
 
 	@Override
-	public synchronized void stop() {
-		super.stop();
+	public long getSimulationDuration() {
+		return supervisor.getTime();
 	}
+
 }
 	

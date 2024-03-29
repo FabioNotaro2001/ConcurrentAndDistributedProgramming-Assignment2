@@ -42,12 +42,18 @@ public class CarsThread extends Thread {
     }
 
     public void run() {
-        while(!simulation.isStopped()) {
-
+        while(true) {
             stepBarrier.waitBeforeActing();     // Attende l'ok per eseguire il passo.
+            System.out.println("check simulazione ... " + getName());
 
+            if(simulation.isStopped())
+                break;
+            System.out.println("step iniziato");
             this.step();
+            System.out.println("step terminato");
+
         }
+        System.out.println("thread car terminate ..." + getName());
     }
 }
 
