@@ -120,9 +120,12 @@ public class SimThreadsSupervisor {
             int stepsDone = 0;
             int t = this.t0;
             long timePerStep = 0;
+            long startStepTime = 0;
             while (stepsDone < this.nSteps && !this.simulation.isStopped()) {
-                long startStepTime = System.currentTimeMillis();
                 this.stepBarrier.waitBeforeActing();    // Avvia l'inizio del passo.
+                if(startStepTime!=0){
+                    timePerStep += System.currentTimeMillis() - startStepTime;
+                }
                 t += this.dt;
                 currentWallTime = System.currentTimeMillis();
                 this.simulation.notifySimulationStep(t);
@@ -131,11 +134,14 @@ public class SimThreadsSupervisor {
                     syncWithWallTime();
                 }
                 stepsDone++;
-                timePerStep += System.currentTimeMillis()-startStepTime;
+                startStepTime = System.currentTimeMillis();
+
             }
+
 
             this.stepBarrier.waitBeforeActing(() -> this.simulation.stop());        // Terminazione della simulazione.
 
+            timePerStep += System.currentTimeMillis() - startStepTime;
             totalTime = System.currentTimeMillis() - startWallTime;
             System.out.println("Completed in " + totalTime + " ms - average time per step: " + (timePerStep/nSteps));
 
