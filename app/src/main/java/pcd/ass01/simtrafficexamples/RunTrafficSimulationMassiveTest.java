@@ -4,9 +4,9 @@ public class RunTrafficSimulationMassiveTest {
 
 	public static void main(String[] args) {		
 
-		int numCars = 100;
-		int nSteps = 1;
-		int nThreads = 2;
+		int numCars = 5000;
+		int nSteps = 100;
+		int nThreads = 8;
 		
 		var simulation = new TrafficSimulationSingleRoadMassiveNumberOfCars(numCars, nThreads);
 		simulation.setup();
