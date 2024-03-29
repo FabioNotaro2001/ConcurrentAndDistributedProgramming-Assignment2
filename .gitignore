@@ -1,6 +1,9 @@
 # Compiled class file
 *.class
 
+# Folders
+app/build/
+
 # Log file
 *.log
 
