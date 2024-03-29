@@ -77,23 +77,23 @@ public abstract class AbstractSimulation {
 		this.notifyReset(t, agents, env);
 		
 		long timePerStep = 0;
-		int nSteps = 0;
+		// int nSteps = 0;
 
-		while (nSteps < numSteps && !isStopped()) {	// Added condition for stop button pressed.
+		// while (nSteps < numSteps && !isStopped()) {	// Added condition for stop button pressed.
 
-			//currentWallTime = System.currentTimeMillis();
+		// 	//currentWallTime = System.currentTimeMillis();
 		
-			/* make a step */
+		// 	/* make a step */
 			
-			t += dt;
+		// 	t += dt;
 
-			nSteps++;			
-			timePerStep += System.currentTimeMillis() - currentWallTime;
+		// 	nSteps++;			
+		// 	timePerStep += System.currentTimeMillis() - currentWallTime;
 			
-			if (toBeInSyncWithWallTime) {
-				syncWithWallTime();
-			}
-		}
+		// 	if (toBeInSyncWithWallTime) {
+		// 		syncWithWallTime();
+		// 	}
+		// }
 		
 		endWallTime = System.currentTimeMillis();
 		this.averageTimePerStep = timePerStep / numSteps;

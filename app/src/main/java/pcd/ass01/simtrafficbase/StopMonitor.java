@@ -9,21 +9,19 @@ public class StopMonitor {
     private int nw;
     private final Condition okToRead;
     private final Condition okTowrite;
-    private ReentrantLock mutexReader;
-    private ReentrantLock mutexWriter;
+    private ReentrantLock mutex;
 
     public StopMonitor(){
         this.nr = 0;
         this.nw = 0;
-        this.mutexReader = new ReentrantLock();
-        this.mutexWriter = new ReentrantLock();
-        this.okToRead = mutexReader.newCondition();
-        this.okTowrite = mutexWriter.newCondition();
+        this.mutex = new ReentrantLock();
+        this.okToRead = mutex.newCondition();
+        this.okTowrite = mutex.newCondition();
     }
 
-    public synchronized void requestRead(){
+    public void requestRead(){
+        mutex.lock();
         try {
-            mutexReader.lock();
             while(this.nw > 0){
                 okToRead.await();
             }
@@ -31,13 +29,13 @@ public class StopMonitor {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            mutexReader.unlock();
+            mutex.unlock();
         }
     }
 
-    public synchronized void releaseRead(){
+    public void releaseRead(){
+        mutex.lock();
         try {
-            mutexWriter.lock();
             this.nr--;
             if (this.nr == 0) {
                 this.okTowrite.signalAll();            
@@ -45,41 +43,34 @@ public class StopMonitor {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            mutexWriter.unlock();
+            mutex.unlock();
         }
     }
 
-    public synchronized void requestWrite(){
+    public void requestWrite(){
         try {
-            mutexWriter.lock();
+            mutex.lock();
             while(this.nr > 0 || this.nw > 0){
-                try {
-                    okTowrite.await();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
+                okTowrite.await();
             }
             this.nw++;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            mutexWriter.unlock();
+            mutex.unlock();
         }
     }
 
-    public synchronized void releaseWrite(){
+    public void releaseWrite(){
         try {
-            mutexWriter.lock();
-            mutexReader.lock();
+            mutex.lock();
             this.nw--;
             this.okTowrite.signalAll();
             this.okToRead.signalAll();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            mutexWriter.unlock();
-            mutexReader.unlock();
+            mutex.unlock();
         }
     }
 }

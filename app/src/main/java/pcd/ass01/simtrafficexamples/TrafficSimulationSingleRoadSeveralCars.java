@@ -70,8 +70,8 @@ public class TrafficSimulationSingleRoadSeveralCars extends AbstractSimulation {
 	@Override
 	public void run(int nSteps) {
 		this.supervisor.setSteps(nSteps);
-		this.supervisor.runAllThreads();
 		super.run(nSteps);
+		this.supervisor.runAllThreads();
 	}
 
 	@Override
