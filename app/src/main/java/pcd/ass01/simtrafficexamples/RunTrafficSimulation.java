@@ -11,10 +11,11 @@ public class RunTrafficSimulation {
 
 		int nThreads = Runtime.getRuntime().availableProcessors();
 		System.err.println("Numero Thread = " + nThreads);
-		var simulation = new TrafficSimulationSingleRoadTwoCars(nThreads, false);
+		//var simulation = new TrafficSimulationSingleRoadTwoCars(nThreads, false);
 		//var simulation = new TrafficSimulationSingleRoadSeveralCars(nThreads, false);
 		//var simulation = new TrafficSimulationSingleRoadWithTrafficLightTwoCars(nThreads, false);
 		//var simulation = new TrafficSimulationWithCrossRoads(nThreads, false);
+		var simulation = new OurCustomTrafficSimulation(nThreads, true);
 		//simulation.setup();
 		
 		RoadSimStatistics stat = new RoadSimStatistics();
