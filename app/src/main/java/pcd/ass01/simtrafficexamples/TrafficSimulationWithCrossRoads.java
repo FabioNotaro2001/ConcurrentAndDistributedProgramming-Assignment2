@@ -18,15 +18,12 @@ public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 	private final SimThreadsSupervisor supervisor;
 
 
-	public TrafficSimulationWithCrossRoads(int nThreads) {
-		super();
+	public TrafficSimulationWithCrossRoads(int nThreads, boolean isRandom) {
+		super(isRandom);
 		this.supervisor = new SimThreadsSupervisor(nThreads, 2, this);
 	}
 	
 	public void setup() {
-
-		Random  gen = new Random(1);
-
 		RoadsEnv env = new RoadsEnv(this);
 		this.setupEnvironment(env);
 		
@@ -40,19 +37,58 @@ public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 		List<CarAgent> cars = new ArrayList<>();
 		List<TrafficLight> lights = new ArrayList<>();
 
-		CarAgent car1 = new CarAgentExtended("car-1", env, r1, 0, 0.1, 0.3, 6);
-		this.addAgent(car1);		
-		CarAgent car2 = new CarAgentExtended("car-2", env, r1, 100, 0.1, 0.3, 5);
-		this.addAgent(car2);		
+		CarAgent car1;
+		CarAgent car2;
+
+		if(super.mustBeRandom()){
+			Random gen = new Random(super.getRandomSeed());
+			double carAcceleration = 0.1 + gen.nextDouble()/2;
+			double carDeceleration =  0.3 + gen.nextDouble()/2;
+			double carMaxSpeed = 5 + gen.nextDouble(6);
+			car1 = new CarAgentExtended("car-1", env, r1, 0, carAcceleration, carDeceleration, carMaxSpeed);
+			carAcceleration = 0.1 + gen.nextDouble()/2;
+			carDeceleration =  0.3 + gen.nextDouble()/2;
+			carMaxSpeed = 5 + gen.nextDouble();
+			car2 = new CarAgentExtended("car-2", env, r1, 100, carAcceleration, carDeceleration, carMaxSpeed);
+		} else{
+			// No random in this simulation.
+			car1 = new CarAgentExtended("car-1", env, r1, 0, 0.1, 0.3, 6);
+
+			car2 = new CarAgentExtended("car-2", env, r1, 100, 0.1, 0.3, 5);
+
+		}
+
+		this.addAgent(car1);
+		this.addAgent(car2);
+
 		
 		TrafficLight tl2 = env.createTrafficLight(new P2d(750,290),  TrafficLight.TrafficLightState.RED, 75, 25, 100);
 
 		Road r2 = env.createRoad(new P2d(750,0), new P2d(750,600));
 		r2.addTrafficLight(tl2, 290);
 
-		CarAgent car3 = new CarAgentExtended("car-3", env, r2, 0, 0.1, 0.2, 5);
-		this.addAgent(car3);		
-		CarAgent car4 = new CarAgentExtended("car-4", env, r2, 100, 0.1, 0.1, 4);
+		CarAgent car3;
+		CarAgent car4;
+
+		if(super.mustBeRandom()){
+			Random gen = new Random(super.getRandomSeed());
+			double carAcceleration = 0.1 + gen.nextDouble()/2;
+			double carDeceleration =  0.2 + gen.nextDouble()/2;
+			double carMaxSpeed = 4 + gen.nextDouble();
+			car3 = new CarAgentExtended("car-3", env, r2, 0, carAcceleration, carDeceleration, carMaxSpeed);
+			carAcceleration = 0.1 + gen.nextDouble()/2;
+			carDeceleration =  0.2 + gen.nextDouble()/2;
+			carMaxSpeed = 4 + gen.nextDouble();
+			car4 = new CarAgentExtended("car-4", env, r2, 100, carAcceleration, carDeceleration, carMaxSpeed);
+		} else{
+			// No random in this simulation.
+			car3 = new CarAgentExtended("car-3", env, r2, 0, 0.1, 0.2, 5);
+
+			car4 = new CarAgentExtended("car-4", env, r2, 100, 0.1, 0.1, 4);
+
+		}
+
+		this.addAgent(car3);
 		this.addAgent(car4);
 		
 		cars.add(car1);

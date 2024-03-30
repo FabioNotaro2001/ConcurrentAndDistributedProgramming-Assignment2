@@ -2,6 +2,7 @@ package pcd.ass01.simtrafficexamples;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import pcd.ass01.simengineseq.AbstractSimulation;
 import pcd.ass01.simtrafficbase.CarAgent;
@@ -16,9 +17,10 @@ public class TrafficSimulationSingleRoadMassiveNumberOfCars extends AbstractSimu
 	private int numCars;
 	private SimThreadsSupervisor supervisor;
 	private final int nThreads;
+
 	
-	public TrafficSimulationSingleRoadMassiveNumberOfCars(int numCars, int nThreads) {
-		super();
+	public TrafficSimulationSingleRoadMassiveNumberOfCars(int numCars, int nThreads, boolean isRandom) {
+		super(isRandom);
 		this.numCars = numCars;
 		this.nThreads = nThreads;
 	}
@@ -34,13 +36,22 @@ public class TrafficSimulationSingleRoadMassiveNumberOfCars extends AbstractSimu
 
 		List<CarAgent> cars = new ArrayList<>();
 
+		Random gen = new Random(super.getRandomSeed());
+
 		for (int i = 0; i < numCars; i++) {
 			
 			String carId = "car-" + i;
-			double initialPos = i*10;			
-			double carAcceleration = 1; //  + gen.nextDouble()/2;
-			double carDeceleration = 0.3; //  + gen.nextDouble()/2;
-			double carMaxSpeed = 7; // 4 + gen.nextDouble();
+			double initialPos = i*10;
+			double carAcceleration = 1;
+			double carDeceleration = 0.3;
+			double carMaxSpeed = 7;
+			if(super.mustBeRandom()){
+
+				carAcceleration += gen.nextDouble()/2;
+				carDeceleration +=  gen.nextDouble()/2;
+				carMaxSpeed += 4 + gen.nextDouble(6);
+			}
+
 						
 			CarAgent car = new CarAgentBasic(carId, env, 
 									road,

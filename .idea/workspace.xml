@@ -6,13 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="d3bc9241-8876-4eaf-b605-fa84d1c3578e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build/tmp/compileJava/compileTransaction/stash-dir/RunTrafficSimulation.class.uniqueId0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/app/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simengineseq/AbstractEnvironment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simengineseq/AbstractEnvironment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simengineseq/AbstractSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simengineseq/AbstractSimulation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/SimThreadsSupervisor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/SimThreadsSupervisor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RoadSimView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RoadSimView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RunTrafficSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RunTrafficSimulation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RunTrafficSimulationMassiveTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RunTrafficSimulationMassiveTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadMassiveNumberOfCars.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadMassiveNumberOfCars.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadSeveralCars.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadSeveralCars.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadTwoCars.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadTwoCars.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadWithTrafficLightTwoCars.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationSingleRoadWithTrafficLightTwoCars.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationWithCrossRoads.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/TrafficSimulationWithCrossRoads.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

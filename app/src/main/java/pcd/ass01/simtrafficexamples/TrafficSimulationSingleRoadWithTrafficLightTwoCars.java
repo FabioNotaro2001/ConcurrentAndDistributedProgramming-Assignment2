@@ -2,6 +2,7 @@ package pcd.ass01.simtrafficexamples;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import pcd.ass01.simengineseq.AbstractSimulation;
 import pcd.ass01.simtrafficbase.CarAgent;
@@ -21,8 +22,8 @@ public class TrafficSimulationSingleRoadWithTrafficLightTwoCars extends Abstract
 
 	private final SimThreadsSupervisor supervisor;
 
-	public TrafficSimulationSingleRoadWithTrafficLightTwoCars(int nThreads) {
-		super();
+	public TrafficSimulationSingleRoadWithTrafficLightTwoCars(int nThreads, boolean isRandom) {
+		super(isRandom);
 		this.supervisor = new SimThreadsSupervisor(nThreads, 1, this);
 
 	}
@@ -43,9 +44,27 @@ public class TrafficSimulationSingleRoadWithTrafficLightTwoCars extends Abstract
 		List<CarAgent> cars = new ArrayList<>();
 		List<TrafficLight> lights = new ArrayList<>();
 
-		CarAgent car1 = new CarAgentExtended("car-1", env, r, 0, 0.1, 0.3, 6);
-		this.addAgent(car1);		
-		CarAgent car2 = new CarAgentExtended("car-2", env, r, 100, 0.1, 0.3, 5);
+		CarAgent car1;
+		CarAgent car2;
+
+		if(super.mustBeRandom()){
+			Random gen = new Random(super.getRandomSeed());
+			double carAcceleration = 0.1 + gen.nextDouble()/2;
+			double carDeceleration =  0.3 + gen.nextDouble()/2;
+			double carMaxSpeed = 5 + gen.nextDouble(6);
+			car1 = new CarAgentExtended("car-1", env, r, 0, carAcceleration, carDeceleration, carMaxSpeed);
+			carAcceleration = 0.1 + gen.nextDouble()/2;
+			carDeceleration =  0.3 + gen.nextDouble()/2;
+			carMaxSpeed = 5 + gen.nextDouble();
+			car2 = new CarAgentExtended("car-2", env, r, 100, carAcceleration, carDeceleration, carMaxSpeed);
+		} else{
+			// No random in this simulation.
+			car1 = new CarAgentExtended("car-1", env, r, 0, 0.1, 0.3, 6);
+
+			car2 = new CarAgentExtended("car-2", env, r, 100, 0.1, 0.3, 5);
+		}
+
+		this.addAgent(car1);
 		this.addAgent(car2);
 
 		cars.add(car1);
@@ -56,7 +75,7 @@ public class TrafficSimulationSingleRoadWithTrafficLightTwoCars extends Abstract
 		supervisor.createCars(cars);
 		supervisor.createTrafficLights(lights);
 
-		this.syncWithTime(60);
+		this.syncWithTime(25);
 	}	
 	
 	@Override

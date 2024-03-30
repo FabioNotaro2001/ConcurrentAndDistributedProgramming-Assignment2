@@ -42,10 +42,15 @@ public abstract class AbstractSimulation {
 	private volatile Boolean stopRequested = false;
 	private StopMonitor stopMonitor = new StopMonitor();
 
-	protected AbstractSimulation() {
+	private boolean isRandom;
+
+	private final int randomSeed = 1;
+
+	protected AbstractSimulation(boolean isRandom) {
 		agents = new ArrayList<AbstractAgent>();
 		listeners = new ArrayList<SimulationListener>();
 		toBeInSyncWithWallTime = false;
+		this.isRandom = isRandom;
 	}
 	
 	/**
@@ -176,6 +181,14 @@ public abstract class AbstractSimulation {
 
 	public void notifySimulationStep(int t){
 		notifyNewStep(t, agents, env);
+	}
+
+	public boolean mustBeRandom(){
+		return this.isRandom;
+	}
+
+	public int getRandomSeed(){
+		return this.randomSeed;
 	}
 
 }
