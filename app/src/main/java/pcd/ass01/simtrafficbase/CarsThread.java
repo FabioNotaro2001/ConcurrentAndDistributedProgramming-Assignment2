@@ -34,7 +34,7 @@ public class CarsThread extends Thread {
     }
 
     public void step() {
-        barrier.waitBeforeActing();             // Attende che tutti i thread abbiano preso le decisioni.
+        barrier.waitBeforeActing();             // Attende che tutti i semafori siano stati aggiornati.
         this.carAgents.forEach(car -> car.senseAndDecide(this.dt));
         barrier.waitBeforeActing();             // Attende che tutti i thread abbiano preso le decisioni.
         this.carAgents.forEach(car -> car.act());

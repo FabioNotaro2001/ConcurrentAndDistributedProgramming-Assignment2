@@ -35,7 +35,7 @@ public class TrafficLightsThread extends Thread{
     public void step() {
         this.trafficLights.forEach(tl -> tl.step(this.dt)); // Il loro step viene così fatto in contemporanea alla fase act delle macchinine.
         barrier.waitBeforeActing(); // Attende che le macchinine abbiano fatto fase sense/decide
-        barrier.waitBeforeActing(); // Attende che le macchinine abbiano fatto fase sense/decide
+        barrier.waitBeforeActing(); // Attende che le macchinine abbiano fatto fase act
         //barrier.waitBeforeActing(); // Attende che le macchinine abbiano fatto act
 
     }
