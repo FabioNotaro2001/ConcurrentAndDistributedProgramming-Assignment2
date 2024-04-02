@@ -65,7 +65,7 @@ public class StopMonitor {
         try {
             mutex.lock();
             this.nw--;
-            this.okTowrite.signalAll();
+            this.okTowrite.signal();
             this.okToRead.signalAll();
         } catch (Exception e) {
             e.printStackTrace();
