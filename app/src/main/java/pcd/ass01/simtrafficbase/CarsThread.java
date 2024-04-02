@@ -8,15 +8,15 @@ import pcd.ass01.simengineseq.AbstractSimulation;
 
 public class CarsThread extends Thread {
 
-    private final Barrier barrier;
-    private final Barrier stepBarrier;
+    private final Barrier actBarrier;   // Barrier before doing an action.
+    private final Barrier stepBarrier;  // Barrier before doing next step.
     private final List<CarAgent> carAgents;
     private final AbstractSimulation simulation;
     private final int dt;
 
     public CarsThread(Barrier barrier, Barrier eventBarrier, int dt, AbstractSimulation simulation){
         super();
-        this.barrier = barrier;
+        this.actBarrier = barrier;
         this.stepBarrier = eventBarrier;
         this.carAgents = new ArrayList<>();
         this.simulation = simulation;
@@ -34,16 +34,15 @@ public class CarsThread extends Thread {
     }
 
     public void step() {
-        barrier.waitBeforeActing();                 // Attende che tutti i semafori siano stati aggiornati.
+        actBarrier.waitBeforeActing();  // Wait that all trafficlights are updated (have done their step).
         this.carAgents.forEach(car -> car.senseAndDecide(this.dt));
-        barrier.waitBeforeActing();                 // Attende che tutti i thread abbiano preso le decisioni.
+        actBarrier.waitBeforeActing();  // Wait that all other car agents have decided.                // Attende che tutti i thread abbiano preso le decisioni.
         this.carAgents.forEach(car -> car.act());
-        //barrier.waitBeforeActing();               // Attende che i semafori abbiano fatto il loro step prima di proseguire.
     }
 
     public void run() {
         while(true) {
-            stepBarrier.waitBeforeActing();     // Attende l'ok per eseguire il passo.
+            stepBarrier.waitBeforeActing(); // Wait before doing next step.
             if(simulation.isStopped())
                 break;
             this.step();

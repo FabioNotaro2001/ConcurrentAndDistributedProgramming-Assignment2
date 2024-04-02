@@ -108,5 +108,4 @@ public class CarAgentBasic extends CarAgent {
 			return dist > CAR_FAR_ENOUGH_DIST;
 		}
 	}
-
 }

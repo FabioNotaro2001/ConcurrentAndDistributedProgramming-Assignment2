@@ -36,10 +36,6 @@ public abstract class CarAgent extends AbstractAgent {
 		this.maxSpeed = vmax;
 		env.registerNewCar(this, road, initialPos);
 	}
-	
-	public void setBarrier(Barrier barrier){
-		this.barrier = barrier;
-	}
 
 	public void senseAndDecide(int dt) {
 		AbstractEnvironment env = this.getEnv();		

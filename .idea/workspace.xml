@@ -5,9 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3bc9241-8876-4eaf-b605-fa84d1c3578e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/OurCustomTrafficSimulation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RunTrafficSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficexamples/RunTrafficSimulation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simengineseq/AbstractSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simengineseq/AbstractSimulation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/Barrier.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/Barrier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/BarrierImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/BarrierImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarAgent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarAgentBasic.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarAgentBasic.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarAgentExtended.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarAgentExtended.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarsThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/pcd/ass01/simtrafficbase/CarsThread.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

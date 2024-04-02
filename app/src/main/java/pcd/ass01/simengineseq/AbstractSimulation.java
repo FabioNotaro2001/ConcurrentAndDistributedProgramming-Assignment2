@@ -40,11 +40,11 @@ public abstract class AbstractSimulation {
 
 	// New field that changes when the stop button is pressed.
 	private volatile Boolean stopRequested = false;
-	private StopMonitor stopMonitor = new StopMonitor();
+	private StopMonitor stopMonitor = new StopMonitor();	// Monitor useful for stopping the simulation without race condition.
 
-	private boolean isRandom;
+	private boolean isRandom;	// Specifies if the simulation should include randomness.
 
-	private final int randomSeed = 1;
+	private final int randomSeed = 1;	// Constant random seed for reproducibility.
 
 	protected AbstractSimulation(boolean isRandom) {
 		agents = new ArrayList<AbstractAgent>();
@@ -68,7 +68,7 @@ public abstract class AbstractSimulation {
 	 */
 	public void run(int numSteps) {
 
-		this.stopRequested = false;
+		this.stopRequested = false;	// Shared variable.
 
 		startWallTime = System.currentTimeMillis();
 
@@ -82,23 +82,6 @@ public abstract class AbstractSimulation {
 		this.notifyReset(t, agents, env);
 		
 		long timePerStep = 0;
-		// int nSteps = 0;
-
-		// while (nSteps < numSteps && !isStopped()) {	// Added condition for stop button pressed.
-
-		// 	//currentWallTime = System.currentTimeMillis();
-		
-		// 	/* make a step */
-			
-		// 	t += dt;
-
-		// 	nSteps++;			
-		// 	timePerStep += System.currentTimeMillis() - currentWallTime;
-			
-		// 	if (toBeInSyncWithWallTime) {
-		// 		syncWithWallTime();
-		// 	}
-		// }
 		
 		endWallTime = System.currentTimeMillis();
 		this.averageTimePerStep = timePerStep / numSteps;
@@ -106,10 +89,6 @@ public abstract class AbstractSimulation {
 	
 	public long getSimulationDuration() {
 		return endWallTime - startWallTime;
-	}
-	
-	public long getAverageTimePerCycle() {
-		return averageTimePerStep;
 	}
 	
 	/* methods for configuring the simulation */
@@ -152,21 +131,8 @@ public abstract class AbstractSimulation {
 		}
 	}
 
-	/* method to sync with wall time at a specified step rate */
-	
-	private void syncWithWallTime() {
-		try {
-			long newWallTime = System.currentTimeMillis();
-			long delay = 1000 / this.nStepsPerSec;
-			long wallTimeDT = newWallTime - currentWallTime;
-			if (wallTimeDT < delay) {
-				Thread.sleep(delay - wallTimeDT);
-			}
-		} catch (Exception ex) {}		
-	}
-
-	// Methods synchronized useful to stop the simulation after button stop pressed.
 	public boolean isStopped(){
+		// We use the monitor for correct reading the shared variable.
 		this.stopMonitor.requestRead();
 		boolean state = this.stopRequested;
 		this.stopMonitor.releaseRead();
@@ -174,6 +140,7 @@ public abstract class AbstractSimulation {
 	}
 
 	public void stop(){
+		// We use the monitor for correct writing the shared variable.
 		this.stopMonitor.requestWrite();
 		this.stopRequested = true;
 		this.stopMonitor.releaseWrite();
@@ -181,7 +148,7 @@ public abstract class AbstractSimulation {
 
 	public void notifySimulationStep(int t){
 		notifyNewStep(t, agents, env);
-	}
+	}	// Useful for GUI.
 
 	public boolean mustBeRandom(){
 		return this.isRandom;
@@ -190,5 +157,4 @@ public abstract class AbstractSimulation {
 	public int getRandomSeed(){
 		return this.randomSeed;
 	}
-
 }

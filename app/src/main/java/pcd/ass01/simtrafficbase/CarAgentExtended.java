@@ -48,7 +48,7 @@ public class CarAgentExtended extends CarAgent {
 		case CarAgentState.ACCELERATING:
 			if (detectedNearCar()) {
 				state = CarAgentState.DECELERATING_BECAUSE_OF_A_CAR;
-			} else if (detectedRedOrOrgangeSemNear()) {
+			} else if (detectedRedOrOrangeSemNear()) {
 				state = CarAgentState.DECELERATING_BECAUSE_OF_A_NOT_GREEN_SEM;
 			} else {
 				this.currentSpeed += acceleration * dt;
@@ -60,7 +60,7 @@ public class CarAgentExtended extends CarAgent {
 		case CarAgentState.MOVING_CONSTANT_SPEED:
 			if (detectedNearCar()) {
 				state = CarAgentState.DECELERATING_BECAUSE_OF_A_CAR;
-			} else if (detectedRedOrOrgangeSemNear()) {
+			} else if (detectedRedOrOrangeSemNear()) {
 				state = CarAgentState.DECELERATING_BECAUSE_OF_A_NOT_GREEN_SEM;
 			}
 			break;
@@ -77,7 +77,7 @@ public class CarAgentExtended extends CarAgent {
 			this.currentSpeed -= deceleration * dt;
 			if (this.currentSpeed <= 0) {
 				state =  CarAgentState.WAITING_FOR_GREEN_SEM;
-			} else if (!detectedRedOrOrgangeSemNear()) {
+			} else if (!detectedRedOrOrangeSemNear()) {
 				state = CarAgentState.ACCELERATING;
 			}
 			break;
@@ -110,7 +110,7 @@ public class CarAgentExtended extends CarAgent {
 		}
 	}
 	
-	private boolean detectedRedOrOrgangeSemNear() {
+	private boolean detectedRedOrOrangeSemNear() {
 		Optional<TrafficLightInfo> sem = currentPercept.nearestSem();
 		if (sem.isEmpty() || sem.get().sem().isGreen()) {
 			return false;
@@ -119,7 +119,6 @@ public class CarAgentExtended extends CarAgent {
 			return dist > 0 && dist < SEM_NEAR_DIST;
 		}
 	}
-
 
 	private boolean detectedGreenSem() {
 		Optional<TrafficLightInfo> sem = currentPercept.nearestSem();
@@ -135,5 +134,4 @@ public class CarAgentExtended extends CarAgent {
 			return dist > CAR_FAR_ENOUGH_DIST;
 		}
 	}
-
 }
