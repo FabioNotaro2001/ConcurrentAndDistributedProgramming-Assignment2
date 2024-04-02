@@ -1,6 +1,4 @@
 package pcd.ass01.simtrafficbase;
-
-import java.util.Optional;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,7 +31,6 @@ public class BarrierImpl implements Barrier {
             nWait++;
             if (nWait < nThreads) {
                 do {
-
                     c.await();
                 } while (nPassed == 0);
             } else {
@@ -44,7 +41,7 @@ public class BarrierImpl implements Barrier {
             nPassed = (nPassed + 1) % nThreads;
 
         } catch (InterruptedException e) {
-
+            e.printStackTrace();
         } finally {
             mutex.unlock();
         }
@@ -62,13 +59,13 @@ public class BarrierImpl implements Barrier {
                 } while (nPassed == 0);
             } else {
                 nWait = 0;              // Reset barriera
-                runActionOnce();     // Azione eseguita quando tutti i thread sono in attesa alla barriera.
+                this.runActionOnce();     // Azione eseguita quando tutti i thread sono in attesa alla barriera.
                 c.signalAll();
             }
             nPassed = (nPassed + 1) % nThreads;
 
         } catch (InterruptedException e) {
-
+            e.printStackTrace();
         } finally {
             mutex.unlock();
         }
