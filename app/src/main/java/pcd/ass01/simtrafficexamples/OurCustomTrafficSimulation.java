@@ -8,9 +8,7 @@ import pcd.ass01.simengineseq.AbstractSimulation;
 import pcd.ass01.simtrafficbase.*;
 
 public class OurCustomTrafficSimulation extends AbstractSimulation {
-
     private final SimThreadsSupervisor supervisor;
-
 
     public OurCustomTrafficSimulation(int nThreads, boolean isRandom) {
         super(isRandom);
@@ -24,6 +22,7 @@ public class OurCustomTrafficSimulation extends AbstractSimulation {
 
         this.setupTimings(0, 1);
 
+        // Road 1 creation.
         Road r1 = env.createRoad(new P2d(0,360), new P2d(1500,360));
         TrafficLight tl1 = env.createTrafficLight(new P2d(270,360), TrafficLight.TrafficLightState.GREEN, 75, 25, 125);
         TrafficLight tl2 = env.createTrafficLight(new P2d(470,360), TrafficLight.TrafficLightState.GREEN, 75, 25, 125);
@@ -32,6 +31,8 @@ public class OurCustomTrafficSimulation extends AbstractSimulation {
         r1.addTrafficLight(tl2, 470);
         r1.addTrafficLight(tl3, 1170);
 
+
+        // Road 2 creation.
         Road r2 = env.createRoad(new P2d(0,180), new P2d(1500,180));
         TrafficLight tl4 = env.createTrafficLight(new P2d(270,180), TrafficLight.TrafficLightState.GREEN, 75, 25, 125);
         TrafficLight tl5 = env.createTrafficLight(new P2d(470,180), TrafficLight.TrafficLightState.GREEN, 75, 25, 125);
@@ -40,18 +41,21 @@ public class OurCustomTrafficSimulation extends AbstractSimulation {
         r2.addTrafficLight(tl5, 470);
         r2.addTrafficLight(tl6, 1170);
 
+        // Road 3 creation.
         Road r3 = env.createRoad(new P2d(300,0), new P2d(300,600));
         TrafficLight tl7 = env.createTrafficLight(new P2d(300,330), TrafficLight.TrafficLightState.RED, 75, 25, 125);
         TrafficLight tl8 = env.createTrafficLight(new P2d(300,150), TrafficLight.TrafficLightState.RED, 75, 25, 125);
         r3.addTrafficLight(tl7, 330);
         r3.addTrafficLight(tl8, 150);
 
+        // Road 4 creation.
         Road r4 = env.createRoad(new P2d(500,0), new P2d(500,600));
         TrafficLight tl9 = env.createTrafficLight(new P2d(500,330), TrafficLight.TrafficLightState.RED, 75, 25, 125);
         TrafficLight tl10 = env.createTrafficLight(new P2d(500,150), TrafficLight.TrafficLightState.RED, 75, 25, 125);
         r4.addTrafficLight(tl9, 330);
         r4.addTrafficLight(tl10, 150);
 
+        // Road 5 creation.
         Road r5 = env.createRoad(new P2d(1200,0), new P2d(1200,600));
         TrafficLight tl11 = env.createTrafficLight(new P2d(1200,330), TrafficLight.TrafficLightState.GREEN, 75, 25, 125);
         TrafficLight tl12 = env.createTrafficLight(new P2d(1200,150), TrafficLight.TrafficLightState.GREEN, 75, 25, 125);
@@ -61,30 +65,27 @@ public class OurCustomTrafficSimulation extends AbstractSimulation {
         List<CarAgent> cars = new ArrayList<>();
         List<TrafficLight> lights = new ArrayList<>();
 
+        // Car positioning in the right road.
         createCarsForRoad(env, r1, 0, 5, 0.1, 0.3, 5, super.mustBeRandom() ? gen : null)
                 .forEach(car -> {
                     this.addAgent(car);
                     cars.add(car);
                 });
-
         createCarsForRoad(env, r2, 5, 5, 0.1, 0.3, 5, super.mustBeRandom() ? gen : null)
                 .forEach(car -> {
                     this.addAgent(car);
                     cars.add(car);
                 });
-
         createCarsForRoad(env, r3, 10, 5, 0.1, 0.3, 5, super.mustBeRandom() ? gen : null)
                 .forEach(car -> {
                     this.addAgent(car);
                     cars.add(car);
                 });
-
         createCarsForRoad(env, r4, 15, 5, 0.1, 0.3, 5, super.mustBeRandom() ? gen : null)
                 .forEach(car -> {
                     this.addAgent(car);
                     cars.add(car);
                 });
-
         createCarsForRoad(env, r5, 20, 5, 0.1, 0.3, 5, super.mustBeRandom() ? gen : null)
                 .forEach(car -> {
                     this.addAgent(car);
@@ -135,6 +136,7 @@ public class OurCustomTrafficSimulation extends AbstractSimulation {
     }
 
     private List<CarAgent> createCarsForRoad(RoadsEnv env, Road r, int carIdOffset, int nCars, double acc, double dec, double vmax, Random rand){
+        // Method that creates the cars for a given road.
         List<CarAgent> result = new ArrayList<>(nCars);
         boolean isRoadHorizontal = r.getTo().y() == r.getFrom().y();
         double deltaX = isRoadHorizontal ? 20 : 0;
@@ -151,7 +153,6 @@ public class OurCustomTrafficSimulation extends AbstractSimulation {
                 carAcc += rand.nextDouble() / 2;
                 carDec += rand.nextDouble() / 2;
                 carMaxSp += rand.nextDouble(6);
-
             }
             result.add(new CarAgentExtended("car-" + (carIdOffset + i), env, r, pos, carAcc, carDec, carMaxSp));
         }

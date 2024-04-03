@@ -4,7 +4,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class StopMonitor {
-    
+    // Monitor of readers/writers type useful for stopping the simulation.
     private int nr;
     private int nw;
     private final Condition okToRead;

@@ -48,13 +48,14 @@ public class RoadSimView extends JFrame implements SimulationListener {
 
 		stepsTextField.setColumns(10);
 
+		// Button start.
 		buttonStart.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
 					int wishedSteps = Integer.parseInt(stepsTextField.getText());
 
-					simulation.setup();
+					simulation.setup();	// Useful for reset.
 					simulation.run(wishedSteps);
 
 					buttonStart.setEnabled(false);
@@ -64,10 +65,13 @@ public class RoadSimView extends JFrame implements SimulationListener {
 				}
 			}
 		});
+
+		// Button stop.
 		buttonStop.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				simulation.stop();
+
 				buttonStart.setEnabled(true);
 				buttonStop.setEnabled(false);
 			}

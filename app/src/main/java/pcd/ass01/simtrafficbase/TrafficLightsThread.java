@@ -7,15 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TrafficLightsThread extends Thread{
-    private final Barrier barrier;
-    private final Barrier stepBarrier;
+    private final Barrier actBarrier;   // Barrier that aligns before acting.
+    private final Barrier stepBarrier;  // Barrier that aligns before doing next step.
     private final List<TrafficLight> trafficLights;
     private AbstractSimulation simulation;
     private final int dt;
 
     public TrafficLightsThread(Barrier barrier, Barrier eventBarrier, int dt, AbstractSimulation simulation){
         super();
-        this.barrier = barrier;
+        this.actBarrier = barrier;
         this.stepBarrier = eventBarrier;
         this.trafficLights = new ArrayList<>();
         this.dt = dt;
@@ -34,19 +34,17 @@ public class TrafficLightsThread extends Thread{
 
     public void step() {
         this.trafficLights.forEach(tl -> tl.step(this.dt));
-        barrier.waitBeforeActing();                         // Attende che le macchinine abbiano fatto fase sense/decide
-        barrier.waitBeforeActing();                         // Attende che le macchinine abbiano fatto fase act
+        actBarrier.waitBeforeActing();  // Barrier waits that all cars have completed sense/decide phase.
+        actBarrier.waitBeforeActing();  // Barrier waits that all cars have completed act phase
     }
 
 
     public void run() {
         while(true) {
-            stepBarrier.waitBeforeActing();     // Attende l'ok per eseguire il passo.
+            stepBarrier.waitBeforeActing(); // Barrier that aligns before doing next step.
             if(simulation.isStopped())
                 break;
             this.step();
         }
-        System.out.println("thread light terminate");
-
     }
 }

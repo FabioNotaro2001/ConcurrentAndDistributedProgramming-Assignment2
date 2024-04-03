@@ -7,16 +7,14 @@ package pcd.ass01.simtrafficexamples;
  */
 public class RunTrafficSimulation {
 
-	public static void main(String[] args) {		
-
+	public static void main(String[] args) {
 		int nThreads = Runtime.getRuntime().availableProcessors();
-		System.err.println("Numero Thread = " + nThreads);
+		System.out.println("Numero thread = " + nThreads);
 		//var simulation = new TrafficSimulationSingleRoadTwoCars(nThreads, false);
 		//var simulation = new TrafficSimulationSingleRoadSeveralCars(nThreads, false);
 		//var simulation = new TrafficSimulationSingleRoadWithTrafficLightTwoCars(nThreads, false);
 		//var simulation = new TrafficSimulationWithCrossRoads(nThreads, false);
-		var simulation = new OurCustomTrafficSimulation(nThreads, true);
-		//simulation.setup();
+		var simulation = new OurCustomTrafficSimulation(nThreads, false);
 		
 		RoadSimStatistics stat = new RoadSimStatistics();
 		RoadSimView view = new RoadSimView(simulation);

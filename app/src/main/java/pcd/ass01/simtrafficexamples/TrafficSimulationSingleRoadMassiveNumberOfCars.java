@@ -13,7 +13,6 @@ import pcd.ass01.simtrafficbase.Road;
 import pcd.ass01.simtrafficbase.RoadsEnv;
 
 public class TrafficSimulationSingleRoadMassiveNumberOfCars extends AbstractSimulation {
-
 	private int numCars;
 	private SimThreadsSupervisor supervisor;
 	private final int nThreads;
@@ -96,6 +95,5 @@ public class TrafficSimulationSingleRoadMassiveNumberOfCars extends AbstractSimu
 	public long getSimulationDuration() {
 		return supervisor.getTime();
 	}
-
 }
 	

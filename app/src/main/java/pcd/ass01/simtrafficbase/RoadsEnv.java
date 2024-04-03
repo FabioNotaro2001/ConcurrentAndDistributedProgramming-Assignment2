@@ -27,8 +27,6 @@ public class RoadsEnv extends AbstractEnvironment {
 
 	private AbstractSimulation simulation;
 
-	private Boolean flagInit = true; //true if trafficlight has to be initializated
-
 	public RoadsEnv(AbstractSimulation simulation) {
 		super("traffic-env");
 		registeredCars = new HashMap<>();	
@@ -40,16 +38,13 @@ public class RoadsEnv extends AbstractEnvironment {
 	@Override
 	public void init() {
 		for (var tl: trafficLights) {
-			//evitare che si riinizializzi quando si ripreme start
-			if (flagInit)
 				tl.init();
 		}
-		flagInit = false;
 	}
 
 	@Override
 	public void step(int dt) {
-		//
+
 	}
 	
 	public void registerNewCar(CarAgent car, Road road, double pos) {
