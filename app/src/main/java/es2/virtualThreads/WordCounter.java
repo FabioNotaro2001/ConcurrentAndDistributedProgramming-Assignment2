@@ -1,6 +1,6 @@
 package es2.virtualThreads;
 
 public interface WordCounter {
-    public void getWordOccurrences(String webAddress, String word, int depth);
+    public void getWordOccurrences(final String webAddress, final String word, final int depth);
 
 }

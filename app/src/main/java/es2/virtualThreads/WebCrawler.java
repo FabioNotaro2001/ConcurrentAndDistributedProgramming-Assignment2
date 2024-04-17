@@ -21,40 +21,48 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
     private final int maxDepth;
     private final String word;
     private final List<String> alreadyExploredPages;
-    public WebCrawler(ExecutorService ex, String webAddress, int currentDepth, int maxDepth, String word, List<String> alreadyExploredPages){
+
+    public WebCrawler(final ExecutorService ex, final String webAddress, final int currentDepth, final int maxDepth, final String word, final List<String> alreadyExploredPages){
         this.executor = ex;
         this.webAddress = webAddress;
         this.currentDepth = currentDepth;
         this.maxDepth = maxDepth;
         this.word = word;
-        this.alreadyExploredPages = alreadyExploredPages;
+        this.alreadyExploredPages = alreadyExploredPages; // Per non esplorare pagine già vististe
     }
+
+    // Method representing the task of crawling a web page.
     @Override
     public Map<String, Integer> call() throws Exception {
-        this.alreadyExploredPages.add(this.webAddress);
+        this.alreadyExploredPages.add(this.webAddress); // Marking the current page explored.
         String outputPadding = " ".repeat(currentDepth - 1);
         System.out.println(outputPadding + "Exploring page " + this.webAddress + " with depth " + this.currentDepth);
         Map<String, Integer> results = new HashMap<>();
         try {
-            Document document = Jsoup.connect(webAddress).get();
+            Document document = Jsoup.connect(webAddress).get(); // Fetching the HTML content of the web page.
 
-            // Check if the keyword is present in the current page
             String text = document.toString();
-            int occurrences = text.split(this.word).length - 1;
+            int occurrences = text.split(this.word).length - 1; // Take the occurrences number in the page.
 
+            // If the current depth is less than the maximum depth, continue exploring links on the page
             if(currentDepth < maxDepth){
                 // Find all links on the page and recursively crawl them
                 Elements links = document.select("a[href]");
                 List<Future<Map<String, Integer>>> futures = new ArrayList<>();  // List of futures of its children.
 
                 for (Element link : links) {
+                    // Clear the Url with regex syntax.
                     String nextUrl = link.absUrl("href").split("#")[0].replaceAll("/+$", "");
                     String noQueryStringUrl = nextUrl.split("\\?")[0].replaceAll("/+$", "");
+
+                    // If the link is not already explored and is a valid URL (https or http), submit it for crawling 
                     if((nextUrl.startsWith("https://") || nextUrl.startsWith("http://")) && !this.alreadyExploredPages.contains(noQueryStringUrl)){
                         this.alreadyExploredPages.add(noQueryStringUrl);
                         futures.add(this.executor.submit(new WebCrawler(executor, nextUrl, currentDepth + 1, maxDepth, word, new ArrayList<>(this.alreadyExploredPages))));
                     }
                 }
+
+                // Collect results from child crawlers
                 futures.forEach(f -> {
                     try {
                         results.putAll(f.get());
@@ -64,6 +72,8 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
                 });
                 futures.clear();
             }
+            
+            // Storing occurrences of the keyword in the current page
             results.put(webAddress, occurrences);
             System.out.println(outputPadding + "Ended exploring " + this.webAddress);
         } catch (IOException e) {
