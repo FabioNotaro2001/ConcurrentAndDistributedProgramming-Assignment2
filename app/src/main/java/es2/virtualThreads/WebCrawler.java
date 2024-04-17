@@ -28,16 +28,17 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
     private final int maxDepth;
     private final String word;
     private final List<String> alreadyExploredPages;
+    private final WrapperMonitor<Boolean> stopped;
 
-
-    public WebCrawler(final ExecutorService ex, Consumer<WebCrawler.Result> consumer, final String webAddress, final int currentDepth, final int maxDepth, final String word, final List<String> alreadyExploredPages){
+    public WebCrawler(final ExecutorService ex, final Consumer<WebCrawler.Result> consumer, final String webAddress, final int currentDepth, final int maxDepth, final String word, final List<String> alreadyExploredPages, final WrapperMonitor<Boolean> stopped){
         this.executor = ex;
         this.consumer = consumer;
         this.webAddress = webAddress;
         this.currentDepth = currentDepth;
         this.maxDepth = maxDepth;
         this.word = word;
-        this.alreadyExploredPages = alreadyExploredPages; // Per non esplorare pagine già vististe
+        this.alreadyExploredPages = alreadyExploredPages; // Per non esplorare pagine già visitate
+        this.stopped = stopped;
     }
 
     private boolean pageAlreadyVisited(String webAddress){
@@ -60,12 +61,21 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
         System.out.println(outputPadding + "Exploring page " + this.webAddress + " with depth " + this.currentDepth);
         Map<String, Integer> results = new HashMap<>();
         try {
-            Document document = Jsoup.connect(webAddress).get(); // Fetching the HTML content of the web page.
+            if (stopped.getValue()) {
+                System.out.println(outputPadding + "Exploration cancelled: " + this.webAddress);
+                return results;
+            }
+
+            Document document = Jsoup.connect(webAddress).timeout(3000).get(); // Fetching the HTML content of the web page.
+
+            // https://virtuale.unibo.it
 
             String text = document.toString();
-            int occurrences = text.split(this.word).length - 1; // Take the occurrences number in the page.
+            int occurrences = text.split("\\b(" + this.word + ")\\b").length - 1; // Take the occurrences number in the page.
             
-            consumer.accept(new Result(webAddress, currentDepth, occurrences));
+            if (occurrences > 0) {
+                consumer.accept(new Result(webAddress, currentDepth, occurrences));
+            }
 
             // If the current depth is less than the maximum depth, continue exploring links on the page
             if(currentDepth < maxDepth){
@@ -81,7 +91,7 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
                     // If the link is not already explored and is a valid URL (https or http), submit it for crawling 
                     if((nextUrl.startsWith("https://") || nextUrl.startsWith("http://")) && !this.pageAlreadyVisited(noQueryStringUrl)){
                         this.addVisitedPage(noQueryStringUrl);
-                        futures.add(this.executor.submit(new WebCrawler(executor, this.consumer, nextUrl, currentDepth + 1, maxDepth, word, this.alreadyExploredPages)));
+                        futures.add(this.executor.submit(new WebCrawler(executor, this.consumer, nextUrl, currentDepth + 1, maxDepth, word, this.alreadyExploredPages, this.stopped)));
                     }
                 }
 

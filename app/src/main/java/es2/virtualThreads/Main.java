@@ -10,6 +10,5 @@ public class Main {
         //counter.getWordOccurrences(webAddress, word, depth);
         Gui gui = new Gui();
         gui.setVisible(true);
-        
     }
 }
