@@ -13,17 +13,26 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
+
+
 
 public class WebCrawler implements Callable<Map<String, Integer>> {
+
+    public record Result(String webAddress, int depth, int occurrences) {}
+
     private final ExecutorService executor;
+    private Consumer<WebCrawler.Result> consumer;
     private final String webAddress;
     private final int currentDepth;
     private final int maxDepth;
     private final String word;
     private final List<String> alreadyExploredPages;
 
-    public WebCrawler(final ExecutorService ex, final String webAddress, final int currentDepth, final int maxDepth, final String word, final List<String> alreadyExploredPages){
+
+    public WebCrawler(final ExecutorService ex, Consumer<WebCrawler.Result> consumer, final String webAddress, final int currentDepth, final int maxDepth, final String word, final List<String> alreadyExploredPages){
         this.executor = ex;
+        this.consumer = consumer;
         this.webAddress = webAddress;
         this.currentDepth = currentDepth;
         this.maxDepth = maxDepth;
@@ -31,10 +40,22 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
         this.alreadyExploredPages = alreadyExploredPages; // Per non esplorare pagine già vististe
     }
 
+    private boolean pageAlreadyVisited(String webAddress){
+        synchronized(this.alreadyExploredPages){
+            return this.alreadyExploredPages.contains(webAddress);
+        }
+    }
+
+    private void addVisitedPage(String webAddress){
+        synchronized(this.alreadyExploredPages){
+            this.alreadyExploredPages.add(webAddress);
+        }
+    }
     // Method representing the task of crawling a web page.
     @Override
     public Map<String, Integer> call() throws Exception {
-        this.alreadyExploredPages.add(this.webAddress); // Marking the current page explored.
+        this.addVisitedPage(this.webAddress); // Marking the current page explored.
+        
         String outputPadding = " ".repeat(currentDepth - 1);
         System.out.println(outputPadding + "Exploring page " + this.webAddress + " with depth " + this.currentDepth);
         Map<String, Integer> results = new HashMap<>();
@@ -43,6 +64,8 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
 
             String text = document.toString();
             int occurrences = text.split(this.word).length - 1; // Take the occurrences number in the page.
+            
+            consumer.accept(new Result(webAddress, currentDepth, occurrences));
 
             // If the current depth is less than the maximum depth, continue exploring links on the page
             if(currentDepth < maxDepth){
@@ -56,9 +79,9 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
                     String noQueryStringUrl = nextUrl.split("\\?")[0].replaceAll("/+$", "");
 
                     // If the link is not already explored and is a valid URL (https or http), submit it for crawling 
-                    if((nextUrl.startsWith("https://") || nextUrl.startsWith("http://")) && !this.alreadyExploredPages.contains(noQueryStringUrl)){
-                        this.alreadyExploredPages.add(noQueryStringUrl);
-                        futures.add(this.executor.submit(new WebCrawler(executor, nextUrl, currentDepth + 1, maxDepth, word, new ArrayList<>(this.alreadyExploredPages))));
+                    if((nextUrl.startsWith("https://") || nextUrl.startsWith("http://")) && !this.pageAlreadyVisited(noQueryStringUrl)){
+                        this.addVisitedPage(noQueryStringUrl);
+                        futures.add(this.executor.submit(new WebCrawler(executor, this.consumer, nextUrl, currentDepth + 1, maxDepth, word, this.alreadyExploredPages)));
                     }
                 }
 
