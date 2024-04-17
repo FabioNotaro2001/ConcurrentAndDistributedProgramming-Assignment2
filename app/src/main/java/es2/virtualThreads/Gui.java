@@ -31,9 +31,9 @@ public class Gui extends JFrame {
         JLabel labelWebAddress = new JLabel("Web address:");
         JLabel labelWord = new JLabel("Word:");
         JLabel labelDepth = new JLabel("Depth:");
-        txtWebAddress = new JTextField(30);
-        txtWord = new JTextField(30);
-        txtDepth = new JTextField(30);
+        txtWebAddress = new JTextField("https://virtuale.unibo.it", 30);
+        txtWord = new JTextField("virtuale", 30);
+        txtDepth = new JTextField("2", 30);
 
         Object[][] data = {};
         String[] columnNames = {"Address", "Depth", "Num"};

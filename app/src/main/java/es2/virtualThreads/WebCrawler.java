@@ -28,9 +28,8 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
     private final int maxDepth;
     private final String word;
     private final List<String> alreadyExploredPages;
-    private final WrapperMonitor<Boolean> stopped;
 
-    public WebCrawler(final ExecutorService ex, final Consumer<WebCrawler.Result> consumer, final String webAddress, final int currentDepth, final int maxDepth, final String word, final List<String> alreadyExploredPages, final WrapperMonitor<Boolean> stopped){
+    public WebCrawler(final ExecutorService ex, final Consumer<WebCrawler.Result> consumer, final String webAddress, final int currentDepth, final int maxDepth, final String word, final List<String> alreadyExploredPages){
         this.executor = ex;
         this.consumer = consumer;
         this.webAddress = webAddress;
@@ -38,7 +37,6 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
         this.maxDepth = maxDepth;
         this.word = word;
         this.alreadyExploredPages = alreadyExploredPages; // Per non esplorare pagine già visitate
-        this.stopped = stopped;
     }
 
     private boolean pageAlreadyVisited(String webAddress){
@@ -57,15 +55,10 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
     public Map<String, Integer> call() throws Exception {
         this.addVisitedPage(this.webAddress); // Marking the current page explored.
         
-        String outputPadding = " ".repeat(currentDepth - 1);
-        System.out.println(outputPadding + "Exploring page " + this.webAddress + " with depth " + this.currentDepth);
+        // String outputPadding = " ".repeat(currentDepth - 1);
+        // System.out.println(outputPadding + "Exploring page " + this.webAddress + " with depth " + this.currentDepth);
         Map<String, Integer> results = new HashMap<>();
         try {
-            if (stopped.getValue()) {
-                System.out.println(outputPadding + "Exploration cancelled: " + this.webAddress);
-                return results;
-            }
-
             Document document = Jsoup.connect(webAddress).timeout(3000).get(); // Fetching the HTML content of the web page.
 
             // https://virtuale.unibo.it
@@ -89,9 +82,9 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
                     String noQueryStringUrl = nextUrl.split("\\?")[0].replaceAll("/+$", "");
 
                     // If the link is not already explored and is a valid URL (https or http), submit it for crawling 
-                    if((nextUrl.startsWith("https://") || nextUrl.startsWith("http://")) && !this.pageAlreadyVisited(noQueryStringUrl)){
+                    if(!executor.isShutdown() && (nextUrl.startsWith("https://") || nextUrl.startsWith("http://")) && !this.pageAlreadyVisited(noQueryStringUrl)){
                         this.addVisitedPage(noQueryStringUrl);
-                        futures.add(this.executor.submit(new WebCrawler(executor, this.consumer, nextUrl, currentDepth + 1, maxDepth, word, this.alreadyExploredPages, this.stopped)));
+                        futures.add(this.executor.submit(new WebCrawler(executor, this.consumer, nextUrl, currentDepth + 1, maxDepth, word, this.alreadyExploredPages)));
                     }
                 }
 
@@ -108,9 +101,9 @@ public class WebCrawler implements Callable<Map<String, Integer>> {
             
             // Storing occurrences of the keyword in the current page
             results.put(webAddress, occurrences);
-            System.out.println(outputPadding + "Ended exploring " + this.webAddress);
+            // System.out.println(outputPadding + "Ended exploring " + this.webAddress);
         } catch (IOException e) {
-            System.out.println(outputPadding + "Failed exploring " + this.webAddress);
+            // System.out.println("Failed exploring " + this.webAddress);
         }
         return results;
     }
