@@ -23,7 +23,9 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
-
+    implementation("io.vertx:vertx-core:4.5.7")
+    implementation("io.vertx:vertx-web:4.5.7")
+    implementation("io.vertx:vertx-web-client:4.5.7")
     implementation ("org.jsoup:jsoup:1.17.2")
 }
 

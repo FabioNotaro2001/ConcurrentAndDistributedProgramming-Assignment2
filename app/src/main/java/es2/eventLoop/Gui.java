@@ -1,4 +1,4 @@
-package es2.virtualThreads;
+package es2.eventLoop;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -85,36 +85,14 @@ public class Gui extends JFrame {
         buttonSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                buttonSearch.setText("Searching...");
-
-                model.setRowCount(0);
-                webAddress = txtWebAddress.getText();
-                if(!(webAddress.startsWith("https://") || webAddress.startsWith("http://"))) {
-                    webAddress = "https://" + webAddress;
-                }
-                word = txtWord.getText();
-                depth = Integer.parseInt(txtDepth.getText());
-                buttonSearch.setEnabled(false);
-                buttonStop.setEnabled(true);
-
-                new Thread(() -> {
-                    wordCounter.getWordOccurrences(webAddress, word, depth);
-                    SwingUtilities.invokeLater(() -> {
-                        buttonSearch.setText("Search");
-                        buttonSearch.setEnabled(true);
-                        buttonStop.setText("Stop");
-                        buttonStop.setEnabled(false);
-                    });
-                }).start();
+                
             }
         });
 
         buttonStop.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                wordCounter.stop();
-                buttonStop.setEnabled(false);
-                buttonStop.setText("Stopping...");
+                
             }
         });
     }
