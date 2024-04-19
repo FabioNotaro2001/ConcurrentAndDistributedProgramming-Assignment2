@@ -28,10 +28,9 @@ public class VerticleSearch extends AbstractVerticle {
     }
 
     public void start(){
-        var f1 = searchAsync();
-		f1.onSuccess((res) -> {
+        searchAsync().onSuccess((res) -> {
             System.out.println(res.toString());
-		});
+        });
     }
 
     public void stop(){
@@ -85,6 +84,12 @@ public class VerticleSearch extends AbstractVerticle {
         String word = "virtuale";
         int depth = 3;
         Vertx vertx = Vertx.vertx();
-        vertx.deployVerticle(new VerticleSearch(webAddress, depth, depth, word));
+        vertx.deployVerticle(new VerticleSearch(webAddress, depth, depth, word), deployResult -> {
+            if (deployResult.succeeded()) {
+                System.out.println("Search deployed successfully.");
+            } else {
+                System.out.println("Search deployment failed: " + deployResult.cause().getMessage());
+            }
+        });
     }
 }
