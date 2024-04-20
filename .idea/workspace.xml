@@ -5,14 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3bc9241-8876-4eaf-b605-fa84d1c3578e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/WebCrawler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/WordCounter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/WordCounterImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/WebCrawler.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/WebCrawler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/Gui.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/Gui.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/MainConsole.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/MainConsole.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/VerticleSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/VerticleSearch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/MainConsole.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/MainConsole.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/WebCrawlerVirtualThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/WebCrawlerVirtualThread.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +73,20 @@
     "project.structure.side.proportion": "0.0"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.MainConsole">
+    <configuration name="MainConsole" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="es2.eventLoop.MainConsole" />
+      <module name="pcd-2023-2024.app.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="es2.eventLoop.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="RunTrafficSimulation" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pcd.ass01.simtrafficexamples.RunTrafficSimulation" />
       <module name="pcd-2023-2024.app.main" />
@@ -101,6 +113,19 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="es2.virtualThreads.MainConsole" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="es2.virtualThreads.MainConsole" />
+      <module name="pcd-2023-2024.app.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="es2.virtualThreads.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="JetRunConfigurationType">
       <module name="Concurrent-Agent-based-Simulations" />
       <method v="2">
@@ -116,6 +141,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.es2.virtualThreads.MainConsole" />
+        <item itemvalue="Application.MainConsole" />
         <item itemvalue="Application.es1.simtrafficexamples.RunTrafficSimulation" />
         <item itemvalue="Application.RunTrafficSimulation" />
       </list>
@@ -131,5 +158,32 @@
       <updated>1710882575249</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/es2/eventLoop/VerticleSearch.java</url>
+          <line>62</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/WebCrawlerVirtualThread.java</url>
+          <line>72</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
