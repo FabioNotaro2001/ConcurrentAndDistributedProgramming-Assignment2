@@ -10,7 +10,9 @@ public class MainConsole {
         String word = "virtuale";
         int depth = 2;
         Vertx vertx = Vertx.vertx();
-        vertx.deployVerticle(new VerticleSearch(webAddress, depth, word))
-                .onComplete(res -> System.exit(0));
+        vertx.deployVerticle(new VerticleSearch(webAddress, depth, word, (res) -> {
+            System.out.println("[In '" + res.webAddress() + "' local occurrences: " + res.occurrences() + "]");
+        }))
+        .onComplete(res -> System.exit(0));
     }
 }

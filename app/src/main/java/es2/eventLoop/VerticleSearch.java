@@ -5,6 +5,7 @@ import io.vertx.core.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 
 import io.vertx.core.buffer.Buffer;
@@ -13,7 +14,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class VerticleSearch extends AbstractVerticle {
+public class VerticleSearch extends AbstractVerticle implements WebCrawler{
+    @Override
+    public void crawl() throws Exception {
+
+    }
+
     private record Search(int currentDepth, String webAddress){}
 
     private final String webAddress;
@@ -21,13 +27,17 @@ public class VerticleSearch extends AbstractVerticle {
     private final String word;
     private int remainingSearches;
     private final List<String> alreadyVisitedPages;
+    private final Consumer<WebCrawler.Result> onPageVisited;
+    private boolean isStopped;
 
-    public VerticleSearch(String webAddress, int maxDepth, String word) {
+    public VerticleSearch(String webAddress, int maxDepth, String word, Consumer<WebCrawler.Result> onPageVisited) {
         this.webAddress = webAddress;
         this.maxDepth = maxDepth;
         this.word = word;
         this.remainingSearches = 1; // 1 because of the initial web address to be visited.
         this.alreadyVisitedPages = new ArrayList<>();
+        this.onPageVisited = onPageVisited;
+        this.isStopped = false;
     }
 
     public void start(Promise<Void> promise){
@@ -40,10 +50,14 @@ public class VerticleSearch extends AbstractVerticle {
     }
 
     public void stop(){
-        
+
+    }
+
+    public synchronized  void requestStop(){
+        this.isStopped = true;
     }
     
-    private void crawl(String info, Promise<Void> promise){
+    private synchronized void crawl(String info, Promise<Void> promise){
         var depthStr = info.split(";.*")[0];
         int currentDepth = Integer.parseInt(depthStr);
         String webAddr = info.substring(depthStr.length() + 1);
@@ -56,7 +70,7 @@ public class VerticleSearch extends AbstractVerticle {
                 String text = document.toString();
                 int occurrences = text.split("\\b(" + this.word + ")\\b").length - 1; // Take the occurrences number in the page.
                 if(occurrences > 0){
-                    System.out.println("[In '" + webAddr + "' local occurrences: " + occurrences + "]");
+                    this.onPageVisited.accept(new Result(webAddr, currentDepth, occurrences));
                 }
 
                 if(currentDepth < maxDepth){
@@ -64,7 +78,7 @@ public class VerticleSearch extends AbstractVerticle {
                     for (Element link : links) {
                         String nextUrl = link.absUrl("href").split("#")[0].replaceAll("/+$", "");
                         String noQueryStringUrl = nextUrl.split("\\?")[0].replaceAll("/+$", "");
-                        if(!this.alreadyVisitedPages.contains(noQueryStringUrl) && (nextUrl.startsWith("https://") || nextUrl.startsWith("http://"))){//
+                        if(!this.isStopped && !this.alreadyVisitedPages.contains(noQueryStringUrl) && (nextUrl.startsWith("https://") || nextUrl.startsWith("http://"))){//
                             this.remainingSearches++;
                             this.alreadyVisitedPages.add(noQueryStringUrl);
                             vertx.eventBus().publish("my-topic", (currentDepth + 1) + ";" + nextUrl);   // Quando mettiamo qualcosa in lista lo segnaliamo con questo

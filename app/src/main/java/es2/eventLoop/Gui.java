@@ -3,11 +3,11 @@ package es2.eventLoop;
 import es2.virtualThreads.WebCrawlerVirtualThread;
 import es2.virtualThreads.WordCounter;
 import es2.virtualThreads.WordCounterImpl;
-
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Vertx;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.*;
 import java.awt.event.*;
 
@@ -21,6 +21,8 @@ public class Gui extends JFrame {
     private int depth;
     private String word;
     private final WordCounter wordCounter;
+    private VerticleSearch verticle;
+    private Vertx vertx;
 
     public Gui() {
         this.wordCounter = new WordCounterImpl(res -> SwingUtilities.invokeLater(() -> {
@@ -89,14 +91,35 @@ public class Gui extends JFrame {
         buttonSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+                model.setRowCount(0);
+                buttonSearch.setEnabled(false);
+                buttonSearch.setText("Searching...");
+                buttonStop.setEnabled(true);
+                String webAddress = txtWebAddress.getText();
+                int depth = Integer.parseInt(txtDepth.getText());
+                String word = txtWord.getText();
+                vertx = Vertx.vertx();
+                verticle = new VerticleSearch(webAddress, depth, word, res -> SwingUtilities.invokeLater(() -> {
+                    updateTextArea(res);
+                }));
+
+                vertx.deployVerticle(verticle)
+                .onComplete((res) -> {
+                    buttonSearch.setEnabled(true);
+                    buttonSearch.setText("Search");
+                    buttonStop.setEnabled(false);
+                    buttonStop.setText("Stop");
+                });
             }
         });
 
         buttonStop.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+                buttonStop.setEnabled(false);
+                buttonStop.setText("Stopping...");
+                verticle.requestStop();
+                vertx.undeploy(verticle.deploymentID());
             }
         });
     }
