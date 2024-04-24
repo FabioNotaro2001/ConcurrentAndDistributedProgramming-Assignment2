@@ -5,30 +5,23 @@ import io.vertx.core.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 
-import io.vertx.core.buffer.Buffer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class VerticleSearch extends AbstractVerticle implements WebCrawler{
-    @Override
-    public void crawl() throws Exception {
-
-    }
-
-    private record Search(int currentDepth, String webAddress){}
-
+public class VerticleSearch extends AbstractVerticle {
     private final String webAddress;
     private final int maxDepth;
     private final String word;
-    private int remainingSearches;
+    private int remainingSearches; // Numero di ricerche ancora da fare per sapere se abbiamo finito
     private final List<String> alreadyVisitedPages;
-    private final Consumer<WebCrawler.Result> onPageVisited;
-    private boolean isStopped;
+    private final Consumer<WebCrawler.Result> onPageVisited; // Dice cosa fare dopo che ho visitato una pagina (mano a mano che i risultati sonoo disponibili) a seconda di console e GUI
+    private final AtomicBoolean isStopped; // Atomico per la gui
 
     public VerticleSearch(String webAddress, int maxDepth, String word, Consumer<WebCrawler.Result> onPageVisited) {
         this.webAddress = webAddress;
@@ -37,40 +30,46 @@ public class VerticleSearch extends AbstractVerticle implements WebCrawler{
         this.remainingSearches = 1; // 1 because of the initial web address to be visited.
         this.alreadyVisitedPages = new ArrayList<>();
         this.onPageVisited = onPageVisited;
-        this.isStopped = false;
+        this.isStopped = new AtomicBoolean(false);
     }
 
+    // Esso viene chiamato implicitamente da solo alla creazione del vertical.
     public void start(Promise<Void> promise){
         System.out.println("Verticle started!");
+        // Prima dico a chi come comportarmi al'arrivo di un evento. Consumer permette di leggere dalla coda di eventi dell'eventloop.
         vertx.eventBus().consumer("my-topic", message -> {
             //System.out.println("Event received: " + message.body().toString());
             crawl(message.body().toString(), promise);
         });
+        // Poi pubblichiamo sull'event loop un evento, in questo caso con il prossimo indirizzo da visitare (essendo a depth 1), con depth e web address
         vertx.eventBus().publish("my-topic", 1 + ";" + webAddress); // We put on the event bus a formatted string composed of two parts.
     }
 
     public void stop(){
-
     }
 
-    public synchronized  void requestStop(){
-        this.isStopped = true;
+    public void requestStop(){
+        this.isStopped.set(true);
     }
     
-    private synchronized void crawl(String info, Promise<Void> promise){
+    private void crawl(String info, Promise<Void> promise){
         var depthStr = info.split(";.*")[0];
         int currentDepth = Integer.parseInt(depthStr);
         String webAddr = info.substring(depthStr.length() + 1);
-        getVertx().runOnContext((id) -> { //equivalte al setTimeout(delay=0)
+        // Viene fatto eseguire dall'event loop in modo asincrono in modo tale da non farlo bloccare.
+        getVertx().runOnContext((id) -> {
             this.remainingSearches --;
-            Document document = new Document("");
             try {
+                if(isStopped.get()) {
+                    return;
+                }
                 this.alreadyVisitedPages.add(webAddr);
-                document = Jsoup.connect(webAddr).timeout(2000).get();
+                Document document = Jsoup.connect(webAddr).timeout(2000).get(); // Time out per siti che non rispondono
                 String text = document.toString();
                 int occurrences = text.split("\\b(" + this.word + ")\\b").length - 1; // Take the occurrences number in the page.
                 if(occurrences > 0){
-                    this.onPageVisited.accept(new Result(webAddr, currentDepth, occurrences));
+                    // Chiama il consumer col risultato.
+                    this.onPageVisited.accept(new WebCrawler.Result(webAddr, currentDepth, occurrences));
                 }
 
                 if(currentDepth < maxDepth){
@@ -78,15 +77,14 @@ public class VerticleSearch extends AbstractVerticle implements WebCrawler{
                     for (Element link : links) {
                         String nextUrl = link.absUrl("href").split("#")[0].replaceAll("/+$", "");
                         String noQueryStringUrl = nextUrl.split("\\?")[0].replaceAll("/+$", "");
-                        if(!this.isStopped && !this.alreadyVisitedPages.contains(noQueryStringUrl) && (nextUrl.startsWith("https://") || nextUrl.startsWith("http://"))){//
+                        if(!this.alreadyVisitedPages.contains(noQueryStringUrl) && (nextUrl.startsWith("https://") || nextUrl.startsWith("http://"))){//
                             this.remainingSearches++;
                             this.alreadyVisitedPages.add(noQueryStringUrl);
-                            vertx.eventBus().publish("my-topic", (currentDepth + 1) + ";" + nextUrl);   // Quando mettiamo qualcosa in lista lo segnaliamo con questo
+                            vertx.eventBus().publish("my-topic", (currentDepth + 1) + ";" + nextUrl); // Pubblichiamo sull'event bus l'evento
                         }
                     }
                 }
-            } catch (IOException | IllegalArgumentException e) {
-
+            } catch (IOException | IllegalArgumentException ignored) {
             } finally {
                 if(remainingSearches == 0){    // Event bus is empty.
                     promise.complete();
