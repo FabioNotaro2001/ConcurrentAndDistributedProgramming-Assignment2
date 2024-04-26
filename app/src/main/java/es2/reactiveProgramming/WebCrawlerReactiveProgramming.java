@@ -13,6 +13,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class WebCrawlerReactiveProgramming {
@@ -21,17 +22,26 @@ public class WebCrawlerReactiveProgramming {
     private final String word;
     private final int maxDepth;
     private final Set<String> alreadyVisitedPages;
+    private final AtomicBoolean isStopped; // Atomico per la gui
 
     public WebCrawlerReactiveProgramming(final String webAddress, final String word, final int maxDepth) {
         this.startWebAddress = webAddress;
         this.word = word;
         this.maxDepth = maxDepth;
         this.alreadyVisitedPages = new ConcurrentSkipListSet<>();
+        this.isStopped = new AtomicBoolean(false);
+    }
+
+    public void requestStop(){
+        this.isStopped.set(true);
     }
 
     public Observable<WebCrawler.Result> crawl() {
         return Observable.<WebCrawler.Result>create(resultEmitter -> {
             Function<Search, Flowable<Search>> crawler = (Search src) -> {
+                if(isStopped.get()) {
+                    return Flowable.empty();
+                }
                 List<Search> linksFound = new ArrayList<>();
 
                 String webAddress = src.webAddress;
