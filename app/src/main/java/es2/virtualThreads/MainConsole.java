@@ -6,7 +6,7 @@ public class MainConsole {
         String word = "virtuale";
         int depth = 3;
         WordCounter counter = new WordCounterImpl((res) -> {
-            System.out.println("[In '" + res.webAddress() + "' local occurrences: " + res.depth() + "]");
+            System.out.println("[In '" + res.webAddress() + "' local occurrences: " + res.occurrences() + "]");
         });
         counter.getWordOccurrences(webAddress, word, depth);
     }
