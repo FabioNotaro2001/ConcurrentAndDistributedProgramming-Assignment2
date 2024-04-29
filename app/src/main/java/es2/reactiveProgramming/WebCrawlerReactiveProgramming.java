@@ -37,7 +37,7 @@ public class WebCrawlerReactiveProgramming {
     }
 
     public Observable<WebCrawler.Result> crawl() {
-        return Observable.<WebCrawler.Result>create(resultEmitter -> {
+        return Observable.<WebCrawler.Result> create(resultEmitter -> {
             Function<Search, Flowable<Search>> crawler = (Search src) -> {
                 if(isStopped.get()) {
                     return Flowable.empty();
@@ -50,12 +50,10 @@ public class WebCrawlerReactiveProgramming {
                 this.alreadyVisitedPages.add(webAddress); // Marking the current page explored.
                 try {
                     Document document = Jsoup.connect(webAddress).timeout(3000).get(); // Fetching the HTML content of the web page.
-
                     String text = document.toString();
                     int occurrences = text.split("\\b(" + this.word + ")\\b").length - 1; // Take the occurrences number in the page.
 
                     if (occurrences > 0) {
-//                        System.out.println("On thread " + Thread.currentThread().getName() + " emitting result...");
                         resultEmitter.onNext(new WebCrawler.Result(webAddress, currentDepth, occurrences));
                     }
 

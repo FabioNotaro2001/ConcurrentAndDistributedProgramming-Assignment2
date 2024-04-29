@@ -3,12 +3,10 @@ import es2.WebCrawler;
 import io.vertx.core.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-
-
+import java.util.concurrent.ConcurrentSkipListSet;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,7 +17,7 @@ public class VerticleSearch extends AbstractVerticle {
     private final int maxDepth;
     private final String word;
     private int remainingSearches; // Numero di ricerche ancora da fare per sapere se abbiamo finito
-    private final List<String> alreadyVisitedPages;
+    private final Set<String> alreadyVisitedPages;;
     private final Consumer<WebCrawler.Result> onPageVisited; // Dice cosa fare dopo che ho visitato una pagina (mano a mano che i risultati sonoo disponibili) a seconda di console e GUI
     private final AtomicBoolean isStopped; // Atomico per la gui
 
@@ -28,7 +26,7 @@ public class VerticleSearch extends AbstractVerticle {
         this.maxDepth = maxDepth;
         this.word = word;
         this.remainingSearches = 1; // 1 because of the initial web address to be visited.
-        this.alreadyVisitedPages = new ArrayList<>();
+        this.alreadyVisitedPages = new ConcurrentSkipListSet<>();
         this.onPageVisited = onPageVisited;
         this.isStopped = new AtomicBoolean(false);
     }
