@@ -4,12 +4,20 @@ import es2.virtualThreads.WebCrawlerVirtualThread;
 import es2.virtualThreads.WordCounter;
 import es2.virtualThreads.WordCounterImpl;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
+import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Gui extends JFrame {
     private JTextField txtWebAddress, txtWord, txtDepth;
@@ -20,15 +28,11 @@ public class Gui extends JFrame {
     private String webAddress;
     private int depth;
     private String word;
-    private final WordCounter wordCounter;
-    private VerticleSearch verticle;
+    private java.util.List<VerticleSearch_v2> verticles = new ArrayList<>();
     private Vertx vertx;
+    private AtomicBoolean stopRequested = new AtomicBoolean(false);
 
     public Gui() {
-        this.wordCounter = new WordCounterImpl(res -> SwingUtilities.invokeLater(() -> {
-            updateTextArea(res);
-        }));
-
         setTitle("Esempio GUI");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
@@ -99,11 +103,22 @@ public class Gui extends JFrame {
                 int depth = Integer.parseInt(txtDepth.getText());
                 String word = txtWord.getText();
                 vertx = Vertx.vertx();
-                // verticle = new VerticleSearch(webAddress, depth, word, res -> SwingUtilities.invokeLater(() -> {
-                //     updateTextArea(res);
-                // }));
+                verticles.clear();
+                stopRequested.set(false);
+                List<Future<String>> liFuture = new ArrayList<>();
+                Set<String> alreadyVisitedPages = new ConcurrentSkipListSet<>();
+                AtomicInteger remainingSearches = new AtomicInteger(1);
 
-                vertx.deployVerticle(verticle)
+                int nVerticle = 5;
+
+                for(int i = 0; i < nVerticle; i++){
+
+                    liFuture.add(vertx.deployVerticle(new VerticleSearch_v2(webAddress, depth, word, res -> SwingUtilities.invokeLater(() -> {
+                        updateTextArea(res);
+                    }), i, nVerticle, alreadyVisitedPages, stopRequested, remainingSearches)));
+                }
+
+                Future.any(liFuture)
                 .onComplete((res) -> {
                     buttonSearch.setEnabled(true);
                     buttonSearch.setText("Search");
@@ -118,13 +133,13 @@ public class Gui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 buttonStop.setEnabled(false);
                 buttonStop.setText("Stopping...");
-                verticle.requestStop();
-                vertx.undeploy(verticle.deploymentID());
+                stopRequested.set(true);
+                verticles.forEach(v -> vertx.undeploy(v.deploymentID()));
             }
         });
     }
 
-    public void updateTextArea(WebCrawlerVirtualThread.Result res) {
+    public void updateTextArea(VerticleSearch_v2.Result res) {
         Object[] rowData = {res.webAddress(), res.depth(), res.occurrences()};
         model.addRow(rowData);
         table.scrollRectToVisible(table.getCellRect(table.getRowCount() - 1, 0, true));

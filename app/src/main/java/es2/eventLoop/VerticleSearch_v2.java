@@ -42,8 +42,6 @@ public class VerticleSearch_v2 extends AbstractVerticle {
 
     // Esso viene chiamato implicitamente da solo alla creazione del vertical.
     public void start(Promise<Void> promise){
-        System.out.println("Verticle "+ this.id + " started");
-
         String topic = "my-topic-" + id;
         // Prima dico a chi come comportarmi al'arrivo di un evento. Consumer permette di leggere dalla coda di eventi dell'eventloop.
         vertx.eventBus().consumer(topic, message -> {
@@ -110,7 +108,6 @@ public class VerticleSearch_v2 extends AbstractVerticle {
                 }
             } finally {
                 if(remainingSearches.get() == 0){    // Event bus is empty.
-                    System.out.println("finito:" + id);
                     promise.complete();
                 }
             }
