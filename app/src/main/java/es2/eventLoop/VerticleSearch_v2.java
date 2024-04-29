@@ -1,11 +1,12 @@
 package es2.eventLoop;
 import io.vertx.core.*;
 
+import java.util.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.concurrent.Callable;
 
 
 import org.jsoup.Jsoup;
@@ -20,21 +21,21 @@ public class VerticleSearch_v2 extends AbstractVerticle {
     private final String webAddress;
     private final int maxDepth;
     private final String word;
-    private int remainingSearches; // Numero di ricerche ancora da fare per sapere se abbiamo finito
-    private final List<String> alreadyVisitedPages;
+    private AtomicInteger remainingSearches; // Numero di ricerche ancora da fare per sapere se abbiamo finito
+    private final Set<String> alreadyVisitedPages;
     private final Consumer<Result> onPageVisited; // Dice cosa fare dopo che ho visitato una pagina (mano a mano che i risultati sonoo disponibili) a seconda di console e GUI
     private final AtomicBoolean isStopped; // Atomico per la gui
     private final int id;
     private final int nVerticle;
 
-    public VerticleSearch_v2(String webAddress, int maxDepth, String word, Consumer<Result> onPageVisited, int id, int nVerticle) {
+    public VerticleSearch_v2(String webAddress, int maxDepth, String word, Consumer<Result> onPageVisited, int id, int nVerticle, Set<String> alreadyVisitedPages, AtomicBoolean isStopped, AtomicInteger remainingSearches) {
         this.webAddress = webAddress;
         this.maxDepth = maxDepth;
         this.word = word;
-        this.remainingSearches = 1; // 1 because of the initial web address to be visited.
-        this.alreadyVisitedPages = new ArrayList<>();
+        this.remainingSearches = remainingSearches; // 1 because of the initial web address to be visited.
+        this.alreadyVisitedPages = alreadyVisitedPages;
         this.onPageVisited = onPageVisited;
-        this.isStopped = new AtomicBoolean(false);
+        this.isStopped = isStopped;
         this.id = id;
         this.nVerticle = nVerticle;
     }
@@ -51,16 +52,9 @@ public class VerticleSearch_v2 extends AbstractVerticle {
         });
         // Poi pubblichiamo sull'event loop un evento, in questo caso con il prossimo indirizzo da visitare (essendo a depth 1), con depth e web address
         
-        if( id == 0){
+        if(id == 0){
             vertx.eventBus().publish("my-topic-0", 1 + ";" + webAddress); // We put on the event bus a formatted string composed of two parts.
-
-            for( int i=1; i<nVerticle; i++){
-                    vertx.deployVerticle(new VerticleSearch_v2(webAddress, maxDepth, word, (res) -> {
-                        System.out.println("Vertical: "+ res.id() +" -> [In '" + res.webAddress() + "' local occurrences: " + res.occurrences() + "]"); // Ogni occorenza viene stampata
-                    }, i, nVerticle))
-                    .onComplete(res -> System.exit(0));
-            }
-            }
+        }
     }
 
     public void stop(){
@@ -74,18 +68,25 @@ public class VerticleSearch_v2 extends AbstractVerticle {
         var depthStr = info.split(";.*")[0];
         int currentDepth = Integer.parseInt(depthStr);
         String webAddr = info.substring(depthStr.length() + 1);
+        
+        Callable<Document> call = () -> {
+            if(isStopped.get()) {
+                return null;
+            }
+            this.alreadyVisitedPages.add(webAddr);
+            return Jsoup.connect(webAddr).timeout(2000).get(); // Time out per siti che non rispondono                
+        };
         // Viene fatto eseguire dall'event loop in modo asincrono in modo tale da non farlo bloccare.
-        getVertx().runOnContext((id_) -> {
-            //System.out.println("Crawl: " + this.id);
-            this.remainingSearches --;
-            try {
-                if(isStopped.get()) {
+        getVertx().executeBlocking(call)
+        .onComplete(res -> {
+            try{
+                this.remainingSearches.decrementAndGet();
+
+                Document document = res.result();
+                if(document == null)
                     return;
-                }
-                this.alreadyVisitedPages.add(webAddr);
-                Document document = Jsoup.connect(webAddr).timeout(2000).get(); // Time out per siti che non rispondono
                 String text = document.toString();
-                int occurrences = text.split("\\b(" + this.word + ")\\b").length - 1; // Take the occurrences number in the page.
+                int occurrences = text.split("\\b(" + this.word + ")\\b").length - 1; // Take the occurrences number in the page.    
                 if(occurrences > 0){
                     // Chiama il consumer col risultato.
                     this.onPageVisited.accept(new Result(webAddr, currentDepth, occurrences, this.id));
@@ -98,17 +99,18 @@ public class VerticleSearch_v2 extends AbstractVerticle {
                         String nextUrl = link.absUrl("href").split("#")[0].replaceAll("/+$", "");
                         String noQueryStringUrl = nextUrl.split("\\?")[0].replaceAll("/+$", "");
                         if(!this.alreadyVisitedPages.contains(noQueryStringUrl) && (nextUrl.startsWith("https://") || nextUrl.startsWith("http://"))){//
-                            this.remainingSearches++;
+                            this.remainingSearches.incrementAndGet();
                             this.alreadyVisitedPages.add(noQueryStringUrl);
                             String topicToPublish = "my-topic-" + (index % nVerticle);
                             index = index + 1;
+                            //System.out.println("public: " + topicToPublish);
                             vertx.eventBus().publish(topicToPublish, (currentDepth + 1) + ";" + nextUrl); // Pubblichiamo sull'event bus l'evento
                         }
                     }
                 }
-            } catch (IOException | IllegalArgumentException ignored) {
             } finally {
-                if(remainingSearches == 0){    // Event bus is empty.
+                if(remainingSearches.get() == 0){    // Event bus is empty.
+                    System.out.println("finito:" + id);
                     promise.complete();
                 }
             }

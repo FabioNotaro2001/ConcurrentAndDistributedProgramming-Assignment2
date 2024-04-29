@@ -17,7 +17,7 @@ public class VerticleSearch extends AbstractVerticle {
     private final int maxDepth;
     private final String word;
     private int remainingSearches; // Numero di ricerche ancora da fare per sapere se abbiamo finito
-    private final Set<String> alreadyVisitedPages;;
+    private final Set<String> alreadyVisitedPages;
     private final Consumer<WebCrawler.Result> onPageVisited; // Dice cosa fare dopo che ho visitato una pagina (mano a mano che i risultati sonoo disponibili) a seconda di console e GUI
     private final AtomicBoolean isStopped; // Atomico per la gui
 
