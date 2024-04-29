@@ -1,7 +1,5 @@
 package es2.eventLoop;
 
-import es2.virtualThreads.WordCounter;
-import es2.virtualThreads.WordCounterImpl;
 import io.vertx.core.Vertx;
 
 

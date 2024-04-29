@@ -7,14 +7,13 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
+import java.util.*;
 
 
 public class WebCrawlerVirtualThread implements Callable<Void>, WebCrawler {
@@ -25,9 +24,9 @@ public class WebCrawlerVirtualThread implements Callable<Void>, WebCrawler {
     private final int currentDepth;
     private final int maxDepth;
     private final String word;
-    private final List<String> alreadyExploredPages;
+    private final Set<String> alreadyExploredPages;
 
-    public WebCrawlerVirtualThread(final ExecutorService ex, final Consumer<WebCrawler.Result> consumer, final String webAddress, final int currentDepth, final int maxDepth, final String word, final List<String> alreadyExploredPages){
+    public WebCrawlerVirtualThread(final ExecutorService ex, final Consumer<WebCrawler.Result> consumer, final String webAddress, final int currentDepth, final int maxDepth, final String word, final Set<String> alreadyExploredPages){
         this.executor = ex;
         this.consumer = consumer;
         this.webAddress = webAddress;
@@ -37,29 +36,11 @@ public class WebCrawlerVirtualThread implements Callable<Void>, WebCrawler {
         this.alreadyExploredPages = alreadyExploredPages; // Per non esplorare pagine già visitate
     }
 
-    private boolean pageAlreadyVisited(String webAddress){
-        synchronized(this.alreadyExploredPages){
-            return this.alreadyExploredPages.contains(webAddress);
-        }
-    }
-
-    private void addVisitedPage(String webAddress){
-        synchronized(this.alreadyExploredPages){
-            this.alreadyExploredPages.add(webAddress);
-        }
-    }
-
     @Override
     public void crawl() throws Exception {
-        this.addVisitedPage(this.webAddress); // Marking the current page explored.
-
-        // String outputPadding = " ".repeat(currentDepth - 1);
-        // System.out.println(outputPadding + "Exploring page " + this.webAddress + " with depth " + this.currentDepth);
+        this.alreadyExploredPages.add(this.webAddress); // Marking the current page explored.
         try {
             Document document = Jsoup.connect(webAddress).timeout(3000).get(); // Fetching the HTML content of the web page.
-
-            // https://virtuale.unibo.it
-
             String text = document.toString();
             int occurrences = text.split("\\b(" + this.word + ")\\b").length - 1; // Take the occurrences number in the page.
 
@@ -79,8 +60,8 @@ public class WebCrawlerVirtualThread implements Callable<Void>, WebCrawler {
                     String noQueryStringUrl = nextUrl.split("\\?")[0].replaceAll("/+$", "");
 
                     // If the link is not already explored and is a valid URL (https or http), submit it for crawling
-                    if(!executor.isShutdown() && (nextUrl.startsWith("https://") || nextUrl.startsWith("http://")) && !this.pageAlreadyVisited(noQueryStringUrl)){
-                        this.addVisitedPage(noQueryStringUrl);
+                    if(!executor.isShutdown() && (nextUrl.startsWith("https://") || nextUrl.startsWith("http://")) && !this.alreadyExploredPages.contains(noQueryStringUrl)){
+                        this.alreadyExploredPages.add(noQueryStringUrl);
                         futures.add(this.executor.submit(new WebCrawlerVirtualThread(executor, this.consumer, nextUrl, currentDepth + 1, maxDepth, word, this.alreadyExploredPages)));
                     }
                 }
@@ -95,9 +76,7 @@ public class WebCrawlerVirtualThread implements Callable<Void>, WebCrawler {
                 });
                 futures.clear();
             }
-            // System.out.println(outputPadding + "Ended exploring " + this.webAddress);
         } catch (IOException e) {
-            // System.out.println("Failed exploring " + this.webAddress);
         }
     }
     // Method representing the task of crawling a web page.

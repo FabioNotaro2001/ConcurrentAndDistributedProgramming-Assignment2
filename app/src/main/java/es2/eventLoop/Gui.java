@@ -99,9 +99,9 @@ public class Gui extends JFrame {
                 int depth = Integer.parseInt(txtDepth.getText());
                 String word = txtWord.getText();
                 vertx = Vertx.vertx();
-                verticle = new VerticleSearch(webAddress, depth, word, res -> SwingUtilities.invokeLater(() -> {
-                    updateTextArea(res);
-                }));
+                // verticle = new VerticleSearch(webAddress, depth, word, res -> SwingUtilities.invokeLater(() -> {
+                //     updateTextArea(res);
+                // }));
 
                 vertx.deployVerticle(verticle)
                 .onComplete((res) -> {

@@ -1,14 +1,12 @@
 package es2.virtualThreads;
-
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class WordCounterImpl implements WordCounter{
-    private Map<String, Integer> getResult;
     private Consumer<WebCrawlerVirtualThread.Result> consumer;
     private ExecutorService executor;
 
@@ -25,7 +23,7 @@ public class WordCounterImpl implements WordCounter{
             this.executor = Executors.newVirtualThreadPerTaskExecutor();
 
             // Submitting a task to a virtual thread executor
-            var res = this.executor.submit(new WebCrawlerVirtualThread(this.executor, consumer, webAddress, 1, depth, word, new ArrayList<>()));
+            var res = this.executor.submit(new WebCrawlerVirtualThread(this.executor, consumer, webAddress, 1, depth, word, new ConcurrentSkipListSet<>()));
             try {                
                 // Printing local occurrences number for each URL 
                 // res.get().forEach((x, y) -> {
