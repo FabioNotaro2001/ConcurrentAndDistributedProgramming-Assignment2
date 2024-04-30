@@ -6,14 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d3bc9241-8876-4eaf-b605-fa84d1c3578e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/WebCrawler.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/WebCrawlerResult.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/Gui.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/Gui.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/VerticleSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/VerticleSearch.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/reactiveProgramming/Gui.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/reactiveProgramming/Gui.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/reactiveProgramming/WebCrawlerReactiveProgramming.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/reactiveProgramming/WebCrawlerReactiveProgramming.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/Gui.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/Gui.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/WebCrawlerVirtualThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/WebCrawlerWithVirtualThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/WordCounter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/WordCounter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/WordCounterImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/virtualThreads/WordCounterImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

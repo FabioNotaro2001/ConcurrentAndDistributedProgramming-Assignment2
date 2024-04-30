@@ -1,7 +1,6 @@
 package es2.virtualThreads;
 
 import es2.WebCrawlerResult;
-
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 
