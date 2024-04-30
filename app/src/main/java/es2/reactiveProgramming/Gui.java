@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import es2.virtualThreads.WebCrawlerVirtualThread;
+import es2.virtualThreads.WebCrawlerWithVirtualThread;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -124,7 +124,7 @@ public class Gui extends JFrame {
         });
     }
 
-    public void updateTextArea(WebCrawlerVirtualThread.Result res) {
+    public void updateTextArea(WebCrawlerWithVirtualThread.Result res) {
         Object[] rowData = {res.webAddress(), res.depth(), res.occurrences()};
         model.addRow(rowData);
         table.scrollRectToVisible(table.getCellRect(table.getRowCount() - 1, 0, true));

@@ -1,11 +1,6 @@
 package es2.eventLoop;
 
-import es2.virtualThreads.WebCrawlerVirtualThread;
-import es2.virtualThreads.WordCounter;
-import es2.virtualThreads.WordCounterImpl;
-import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
-import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

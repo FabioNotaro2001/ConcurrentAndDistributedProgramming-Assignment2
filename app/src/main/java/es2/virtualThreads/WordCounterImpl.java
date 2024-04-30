@@ -1,35 +1,26 @@
 package es2.virtualThreads;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import es2.WebCrawlerResult;
+
+import java.util.concurrent.*;
 import java.util.function.Consumer;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 public class WordCounterImpl implements WordCounter{
-    private Consumer<WebCrawlerVirtualThread.Result> consumer;
+    private Consumer<WebCrawlerResult.Result> consumer; // Defines the action to be done once the result is ready.
     private ExecutorService executor;
 
-    public WordCounterImpl(){
-        this.consumer = res -> { };
-    }
-
-    public WordCounterImpl(Consumer<WebCrawlerVirtualThread.Result> consumer){
+    public WordCounterImpl(Consumer<WebCrawlerResult.Result> consumer){
         this.consumer = consumer;
     }
     
     public void getWordOccurrences(final String webAddress, final String word, final int depth){
         try {
-            this.executor = Executors.newVirtualThreadPerTaskExecutor();
+            this.executor = Executors.newVirtualThreadPerTaskExecutor();    // Virtual thread executor.
 
-            // Submitting a task to a virtual thread executor
-            var res = this.executor.submit(new WebCrawlerVirtualThread(this.executor, consumer, webAddress, 1, depth, word, new ConcurrentSkipListSet<>()));
-            try {                
-                // Printing local occurrences number for each URL 
-                // res.get().forEach((x, y) -> {
-                //     System.out.println("[In " + x + " local occurrences: " + y + "]");
-                // });
-                res.get();
+            // Here we submit the crawler task to the executor.
+            Future<Void> res = this.executor.submit(new WebCrawlerWithVirtualThread(this.executor, consumer, webAddress, 1, depth, word, new ConcurrentSkipListSet<>()));
+            try {
+                res.get();  // Waits the completion of the executor task.
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
@@ -37,6 +28,7 @@ public class WordCounterImpl implements WordCounter{
             this.executor.shutdown();
         }
     }
+
     @Override
     public void stop() {
         if (this.executor != null) {

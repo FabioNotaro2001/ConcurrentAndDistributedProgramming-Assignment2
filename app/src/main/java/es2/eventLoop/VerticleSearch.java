@@ -1,5 +1,5 @@
 package es2.eventLoop;
-import es2.WebCrawler;
+import es2.WebCrawlerResult;
 import io.vertx.core.*;
 
 import java.io.IOException;
@@ -18,10 +18,10 @@ public class VerticleSearch extends AbstractVerticle {
     private final String word;
     private int remainingSearches; // Numero di ricerche ancora da fare per sapere se abbiamo finito
     private final Set<String> alreadyVisitedPages;
-    private final Consumer<WebCrawler.Result> onPageVisited; // Dice cosa fare dopo che ho visitato una pagina (mano a mano che i risultati sonoo disponibili) a seconda di console e GUI
+    private final Consumer<WebCrawlerResult.Result> onPageVisited; // Dice cosa fare dopo che ho visitato una pagina (mano a mano che i risultati sonoo disponibili) a seconda di console e GUI
     private final AtomicBoolean isStopped; // Atomico per la gui
 
-    public VerticleSearch(String webAddress, int maxDepth, String word, Consumer<WebCrawler.Result> onPageVisited) {
+    public VerticleSearch(String webAddress, int maxDepth, String word, Consumer<WebCrawlerResult.Result> onPageVisited) {
         this.webAddress = webAddress;
         this.maxDepth = maxDepth;
         this.word = word;
@@ -67,7 +67,7 @@ public class VerticleSearch extends AbstractVerticle {
                 int occurrences = text.split("\\b(" + this.word + ")\\b").length - 1; // Take the occurrences number in the page.
                 if(occurrences > 0){
                     // Chiama il consumer col risultato.
-                    this.onPageVisited.accept(new WebCrawler.Result(webAddr, currentDepth, occurrences));
+                    this.onPageVisited.accept(new WebCrawlerResult.Result(webAddr, currentDepth, occurrences));
                 }
 
                 if(currentDepth < maxDepth){

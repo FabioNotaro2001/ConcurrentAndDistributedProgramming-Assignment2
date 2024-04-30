@@ -1,6 +1,6 @@
 package es2.reactiveProgramming;
 
-import es2.WebCrawler;
+import es2.WebCrawlerResult;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.functions.Function;
@@ -36,8 +36,8 @@ public class WebCrawlerReactiveProgramming {
         this.isStopped.set(true);
     }
 
-    public Observable<WebCrawler.Result> crawl() {
-        return Observable.<WebCrawler.Result> create(resultEmitter -> {
+    public Observable<WebCrawlerResult.Result> crawl() {
+        return Observable.<WebCrawlerResult.Result> create(resultEmitter -> {
             Function<Search, Flowable<Search>> crawler = (Search src) -> {
                 if(isStopped.get()) {
                     return Flowable.empty();
@@ -54,7 +54,7 @@ public class WebCrawlerReactiveProgramming {
                     int occurrences = text.split("\\b(" + this.word + ")\\b").length - 1; // Take the occurrences number in the page.
 
                     if (occurrences > 0) {
-                        resultEmitter.onNext(new WebCrawler.Result(webAddress, currentDepth, occurrences));
+                        resultEmitter.onNext(new WebCrawlerResult.Result(webAddress, currentDepth, occurrences));
                     }
 
                     // If the current depth is less than the maximum depth, continue exploring links on the page

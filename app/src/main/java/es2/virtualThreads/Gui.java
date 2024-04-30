@@ -1,9 +1,10 @@
 package es2.virtualThreads;
 
+import es2.WebCrawlerResult;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.*;
 import java.awt.event.*;
 
@@ -12,13 +13,13 @@ public class Gui extends JFrame {
     private JButton buttonSearch, buttonStop;
     private DefaultTableModel model;
     private JTable table;
-
     private String webAddress;
     private int depth;
     private String word;
     private final WordCounter wordCounter;
 
     public Gui() {
+        // Here we use invokeLater() in the consumer with invokeLater() to update the text area but making the GUI reactive.
         this.wordCounter = new WordCounterImpl(res -> SwingUtilities.invokeLater(() -> {
             updateTextArea(res);
         }));
@@ -119,7 +120,7 @@ public class Gui extends JFrame {
         });
     }
 
-    public void updateTextArea(WebCrawlerVirtualThread.Result res) {
+    public void updateTextArea(WebCrawlerResult.Result res) {
         Object[] rowData = {res.webAddress(), res.depth(), res.occurrences()};
         model.addRow(rowData);
         table.scrollRectToVisible(table.getCellRect(table.getRowCount() - 1, 0, true));
