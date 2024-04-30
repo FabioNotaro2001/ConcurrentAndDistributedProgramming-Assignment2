@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="d3bc9241-8876-4eaf-b605-fa84d1c3578e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/Gui.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/Gui.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/VerticleSearch_v2.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es2/eventLoop/VerticleSearch_v2.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/es1/simtrafficbase/SimThreadsSupervisor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es1/simtrafficbase/SimThreadsSupervisor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/es1/simtrafficexamples/RoadSimView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/es1/simtrafficexamples/RoadSimView.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

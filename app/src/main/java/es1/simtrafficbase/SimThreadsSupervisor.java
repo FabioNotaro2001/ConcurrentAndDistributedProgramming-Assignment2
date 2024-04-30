@@ -20,7 +20,7 @@ public class SimThreadsSupervisor {
 
     private RoadsEnv env;
 
-    private final ExecutorService executor;
+    private final ExecutorService executor; // Executor that executes the steps of all entities in the correct order.
 
     private AbstractSimulation simulation;
     private int nStepsPerSec = 0;
@@ -32,13 +32,13 @@ public class SimThreadsSupervisor {
     /* for time statistics*/
 	private long currentWallTime;
 
-    private long totalTime=0;
+    private long totalTime = 0;
 
     public SimThreadsSupervisor(int nThreads, AbstractSimulation simulation) { 
         this.simulation = simulation;
         this.carsList = new ArrayList<>();
         this.trafficLightsList = new ArrayList<>();
-        this.executor = Executors.newFixedThreadPool( nThreads + 1); // +1 For supervisor
+        this.executor = Executors.newFixedThreadPool( nThreads + 1); // + 1 for supervisor.
     }
 
     public void setEnvironment(RoadsEnv env) {
@@ -67,38 +67,42 @@ public class SimThreadsSupervisor {
     }
 
     private void cycle() {
-        List<Future<?>> ft = new ArrayList<>();
-        Consumer<Future<?>> futureGet = f -> {
+        // Single cycle of iteration.
+        List<Future<?>> listOfFutures = new ArrayList<>();
+        Consumer<Future<?>> futureGet = f -> {  // Action to be done when we need the result of a future.
             try {
                 f.get();
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
         };
+
+        // Traffic light step: for each traffic light the executor submit its step and add the future to the list.
         this.trafficLightsList.forEach(tr -> {
-            ft.add(executor.submit( () -> {
+            listOfFutures.add(executor.submit( () -> {
                 tr.step(this.dt);
             }));
         });
-        ft.forEach(futureGet);
-        ft.clear();
+        listOfFutures.forEach(futureGet);   // Get of all futures in the list. Sort of barrier.
 
+        // Car sense and decide step.
+        listOfFutures.clear();
         this.carsList.forEach(cr -> {
-            ft.add(executor.submit( () -> {
+            listOfFutures.add(executor.submit( () -> {
                 cr.senseAndDecide(this.dt);
             }));
         });
-        ft.forEach(futureGet);
-        ft.clear();
+        listOfFutures.forEach(futureGet);
 
+        // Car act step.
+        listOfFutures.clear();
         this.carsList.forEach(cr -> {
-            ft.add(executor.submit( () -> {
+            listOfFutures.add(executor.submit( () -> {
                 cr.act();
             }));
         });
-        ft.forEach(futureGet);
-        ft.clear();
-
+        listOfFutures.forEach(futureGet);
+        listOfFutures.clear();
     }
 
     public void runAllThreads() {
@@ -110,7 +114,7 @@ public class SimThreadsSupervisor {
             tr.init();
         });
 
-        // Start the supervisor thread.
+        // Starts the supervisor.
         executor.execute(() -> {
             long startWallTime = System.currentTimeMillis();
             int stepsDone = 0;
@@ -130,7 +134,7 @@ public class SimThreadsSupervisor {
                     this.simulation.notifySimulationStep(t);
     
                     if(nStepsPerSec>0){
-                        syncWithWallTime();
+                        syncWithWallTime(); // Wait between two consecutive cycles.
                     }
                     stepsDone++;
                     startStepTime = System.currentTimeMillis();
@@ -150,6 +154,7 @@ public class SimThreadsSupervisor {
         return this.totalTime;
     }
 
+    // Method that waits some time if the cycle is quicker than expected.
     private void syncWithWallTime() {
 		try {
 			long newWallTime = System.currentTimeMillis();
