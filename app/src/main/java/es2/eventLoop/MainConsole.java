@@ -16,32 +16,33 @@ public class MainConsole {
         int depth = 3;
         Vertx vertx = Vertx.vertx();
 
-        // L'event loop è il motore principale di Vert.x,
-        // responsabile della gestione degli eventi e dell'esecuzione dei verticle.
-        // Quando un evento arriva, viene messo in coda nell'event loop e i verticle associati
-        // vengono chiamati per gestire l'evento.
-        // deployVerticle lanciare un programma async che interagisce con l'event loop.
-        
+        // deployVerticle execute a verticle, which runs asynchronously.
+
+        // Version 1 (one single verticle).
         /*
         vertx.deployVerticle(new VerticleSearch(webAddress, depth, word, (res) -> {
             System.out.println("[In '" + res.webAddress() + "' local occurrences: " + res.occurrences() + "]"); // Ogni occorenza viene stampata
         }))
         .onComplete(res -> System.exit(0));
         */
-        final Set<String> alreadyVisitedPages = new ConcurrentSkipListSet<>();
-        final AtomicBoolean isStopped = new AtomicBoolean(false); // Atomico per la gui
-        final AtomicInteger remainingSearches = new AtomicInteger(1); // Numero di ricerche ancora da fare per sapere se abbiamo finito
 
-        List<Future<String>> liFuture = new ArrayList<>();
+        // Version 2 (multiple verticles).
+        // We need to pass explicitly the shared collections as they must be shared among all verticles.
+        final Set<String> alreadyVisitedPages = new ConcurrentSkipListSet<>();
+        final AtomicBoolean isStopped = new AtomicBoolean(false); // Atomic for the GUI.
+        final AtomicInteger remainingSearches = new AtomicInteger(1); // Number of searches to be done, useful to know if the search is over.
+
+        List<Future<String>> listOfFutures = new ArrayList<>();
 
         int nVerticle = 5;
 
         for(int i = 0; i < nVerticle; i++){
-            liFuture.add(vertx.deployVerticle(new VerticleSearch_v2(webAddress, depth, word, (res) -> {
-                System.out.println("Verticle: "+ res.id() +" -> [In '" + res.webAddress() + "' local occurrences: " + res.occurrences() + "]"); // Ogni occorenza viene stampata
+            listOfFutures.add(vertx.deployVerticle(new VerticleSearch_v2(webAddress, depth, word, (res) -> {
+                System.out.println("Verticle: "+ res.id() +" -> [In '" + res.webAddress() + "' local occurrences: " + res.occurrences() + "]");
             }, i, nVerticle, alreadyVisitedPages, isStopped, remainingSearches)));
         }
 
-        Future.any(liFuture).onComplete((res) -> System.exit(0));
+        // Only one of the verticles will complete the promise because only one will read remainingSearches == 0.
+        Future.any(listOfFutures).onComplete((res) -> System.exit(0));
     }
 }

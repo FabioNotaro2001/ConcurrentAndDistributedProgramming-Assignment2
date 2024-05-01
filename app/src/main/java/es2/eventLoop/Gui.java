@@ -19,11 +19,7 @@ public class Gui extends JFrame {
     private JButton buttonSearch, buttonStop;
     private DefaultTableModel model;
     private JTable table;
-
-    private String webAddress;
-    private int depth;
-    private String word;
-    private java.util.List<VerticleSearch_v2> verticles = new ArrayList<>();
+    private java.util.List<VerticleSearch_v2> listOfVerticles = new ArrayList<>();
     private Vertx vertx;
     private AtomicBoolean stopRequested = new AtomicBoolean(false);
 
@@ -94,26 +90,31 @@ public class Gui extends JFrame {
                 buttonSearch.setEnabled(false);
                 buttonSearch.setText("Searching...");
                 buttonStop.setEnabled(true);
+
                 String webAddress = txtWebAddress.getText();
                 int depth = Integer.parseInt(txtDepth.getText());
                 String word = txtWord.getText();
+
                 vertx = Vertx.vertx();
-                verticles.clear();
+                listOfVerticles.clear();
                 stopRequested.set(false);
-                List<Future<String>> liFuture = new ArrayList<>();
+                List<Future<String>> listOfFutures = new ArrayList<>();
                 Set<String> alreadyVisitedPages = new ConcurrentSkipListSet<>();
                 AtomicInteger remainingSearches = new AtomicInteger(1);
 
                 int nVerticle = 5;
 
+                // Creation of the verticles.
                 for(int i = 0; i < nVerticle; i++){
-
-                    liFuture.add(vertx.deployVerticle(new VerticleSearch_v2(webAddress, depth, word, res -> SwingUtilities.invokeLater(() -> {
+                    VerticleSearch_v2 verticle = new VerticleSearch_v2(webAddress, depth, word, res -> SwingUtilities.invokeLater(() -> {
                         updateTextArea(res);
-                    }), i, nVerticle, alreadyVisitedPages, stopRequested, remainingSearches)));
+                    }), i, nVerticle, alreadyVisitedPages, stopRequested, remainingSearches);
+
+                    listOfVerticles.add(verticle);
+                    listOfFutures.add(vertx.deployVerticle(verticle));
                 }
 
-                Future.any(liFuture)
+                Future.any(listOfFutures)   // Only one of the verticles will complete the promise because only one will read remainingSearches == 0.
                 .onComplete((res) -> {
                     buttonSearch.setEnabled(true);
                     buttonSearch.setText("Search");
@@ -129,7 +130,9 @@ public class Gui extends JFrame {
                 buttonStop.setEnabled(false);
                 buttonStop.setText("Stopping...");
                 stopRequested.set(true);
-                verticles.forEach(v -> vertx.undeploy(v.deploymentID()));
+                
+                // Stop all the verticles deployed and added to the list.
+                listOfVerticles.forEach(v -> vertx.undeploy(v.deploymentID()));
             }
         });
     }

@@ -2,7 +2,6 @@ package es2.eventLoop;
 import io.vertx.core.*;
 
 import java.util.*;
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -16,17 +15,19 @@ import org.jsoup.select.Elements;
 
 public class VerticleSearch_v2 extends AbstractVerticle {
 
+    // Record useful to link the result with the verticle that found it.
     record Result(String webAddress, int depth, int occurrences, int id) {}
 
     private final String webAddress;
     private final int maxDepth;
     private final String word;
-    private AtomicInteger remainingSearches; // Numero di ricerche ancora da fare per sapere se abbiamo finito
+    private AtomicInteger remainingSearches;
     private final Set<String> alreadyVisitedPages;
-    private final Consumer<Result> onPageVisited; // Dice cosa fare dopo che ho visitato una pagina (mano a mano che i risultati sonoo disponibili) a seconda di console e GUI
-    private final AtomicBoolean isStopped; // Atomico per la gui
-    private final int id;
-    private final int nVerticle;
+    // Defines the action to be done after visiting a page (as results become available) depending on console or GUI.
+    private final Consumer<Result> onPageVisited;
+    private final AtomicBoolean isStopped; // Atomic for the GUI.
+    private final int verticleId;
+    private final int nVerticles;   // Wished number of verticles.
 
     public VerticleSearch_v2(String webAddress, int maxDepth, String word, Consumer<Result> onPageVisited, int id, int nVerticle, Set<String> alreadyVisitedPages, AtomicBoolean isStopped, AtomicInteger remainingSearches) {
         this.webAddress = webAddress;
@@ -36,36 +37,33 @@ public class VerticleSearch_v2 extends AbstractVerticle {
         this.alreadyVisitedPages = alreadyVisitedPages;
         this.onPageVisited = onPageVisited;
         this.isStopped = isStopped;
-        this.id = id;
-        this.nVerticle = nVerticle;
+        this.verticleId = id;
+        this.nVerticles = nVerticle;
     }
 
-    // Esso viene chiamato implicitamente da solo alla creazione del vertical.
+    // This method is called implicitly with the creation of the verticle.
     public void start(Promise<Void> promise){
-        String topic = "my-topic-" + id;
-        // Prima dico a chi come comportarmi al'arrivo di un evento. Consumer permette di leggere dalla coda di eventi dell'eventloop.
+        // As the event bus is shared, every verticles reads from a different topic.
+        String topic = "my-topic-" + verticleId;
+
+        // Defines what to do after reading something on the event bus.
         vertx.eventBus().consumer(topic, message -> {
-            //System.out.println("Event received: " + message.body().toString());
             crawl(message.body().toString(), promise);
         });
-        // Poi pubblichiamo sull'event loop un evento, in questo caso con il prossimo indirizzo da visitare (essendo a depth 1), con depth e web address
-        
-        if(id == 0){
+
+        // Publication of the first link to be explored on the event bus (formatted).
+        if(verticleId == 0){
             vertx.eventBus().publish("my-topic-0", 1 + ";" + webAddress); // We put on the event bus a formatted string composed of two parts.
         }
     }
 
     public void stop(){
     }
-
-    public void requestStop(){
-        this.isStopped.set(true);
-    }
     
-    private void crawl(String info, Promise<Void> promise){
-        var depthStr = info.split(";.*")[0];
+    private void crawl(String messageReadFromBus, Promise<Void> promise){
+        String depthStr = messageReadFromBus.split(";.*")[0];
         int currentDepth = Integer.parseInt(depthStr);
-        String webAddr = info.substring(depthStr.length() + 1);
+        String webAddr = messageReadFromBus.substring(depthStr.length() + 1);
         
         Callable<Document> call = () -> {
             if(isStopped.get()) {
@@ -74,22 +72,26 @@ public class VerticleSearch_v2 extends AbstractVerticle {
             this.alreadyVisitedPages.add(webAddr);
             return Jsoup.connect(webAddr).timeout(2000).get(); // Time out per siti che non rispondono                
         };
-        // Viene fatto eseguire dall'event loop in modo asincrono in modo tale da non farlo bloccare.
-        getVertx().executeBlocking(call)
+
+        getVertx().executeBlocking(call)    // Executes call from another thread in order not to block the main one (as the connection is heavy).
         .onComplete(res -> {
             try{
                 this.remainingSearches.decrementAndGet();
 
                 Document document = res.result();
-                if(document == null)
+                if(document == null){
                     return;
-                String text = document.toString();
-                int occurrences = text.split("\\b(" + this.word + ")\\b").length - 1; // Take the occurrences number in the page.    
-                if(occurrences > 0){
-                    // Chiama il consumer col risultato.
-                    this.onPageVisited.accept(new Result(webAddr, currentDepth, occurrences, this.id));
                 }
 
+                String text = document.toString();
+                int occurrences = text.split("\\b(" + this.word + ")\\b").length - 1; // Take the occurrences number in the page.    
+
+                if(occurrences > 0){
+                    // Call the consumer passing to it the results computed.
+                    this.onPageVisited.accept(new Result(webAddr, currentDepth, occurrences, this.verticleId));
+                }
+
+                // If the max depth has not been reached we must find all the links in this page.
                 if(currentDepth < maxDepth){
                     Elements links = document.select("a[href]");
                     int index = 0;
@@ -99,15 +101,18 @@ public class VerticleSearch_v2 extends AbstractVerticle {
                         if(!this.alreadyVisitedPages.contains(noQueryStringUrl) && (nextUrl.startsWith("https://") || nextUrl.startsWith("http://"))){//
                             this.remainingSearches.incrementAndGet();
                             this.alreadyVisitedPages.add(noQueryStringUrl);
-                            String topicToPublish = "my-topic-" + (index % nVerticle);
+
+                            // For each link found compute the correct topic on which it must be published.
+                            String topicToPublish = "my-topic-" + (index % nVerticles);
                             index = index + 1;
-                            //System.out.println("public: " + topicToPublish);
+
+                            // Publication on the event bus of all the links found in the current page.
                             vertx.eventBus().publish(topicToPublish, (currentDepth + 1) + ";" + nextUrl); // Pubblichiamo sull'event bus l'evento
                         }
                     }
                 }
             } finally {
-                if(remainingSearches.get() == 0){    // Event bus is empty.
+                if(remainingSearches.get() == 0){
                     promise.complete();
                 }
             }

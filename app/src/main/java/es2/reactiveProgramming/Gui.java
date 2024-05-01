@@ -19,7 +19,7 @@ public class Gui extends JFrame {
     private int depth;
     private String word;
 
-    private WebCrawlerReactiveProgramming webCrawler;
+    private WebCrawlerWithReactiveProgramming webCrawler;
 
     public Gui() {
 
@@ -97,16 +97,16 @@ public class Gui extends JFrame {
                 buttonSearch.setEnabled(false);
                 buttonStop.setEnabled(true);
 
-                webCrawler = new WebCrawlerReactiveProgramming(webAddress, word, depth);
+                webCrawler = new WebCrawlerWithReactiveProgramming(webAddress, word, depth);
 
                 webCrawler.crawl()
                     .doOnComplete( () ->
-                        SwingUtilities.invokeLater(() -> {
-                            buttonSearch.setText("Search");
-                            buttonSearch.setEnabled(true);
-                            buttonStop.setText("Stop");
-                            buttonStop.setEnabled(false);
-                        })
+                            SwingUtilities.invokeLater(() -> {
+                                buttonSearch.setText("Search");
+                                buttonSearch.setEnabled(true);
+                                buttonStop.setText("Stop");
+                                buttonStop.setEnabled(false);
+                            })
                     )
                     .subscribe(res -> {
                         SwingUtilities.invokeLater(() -> updateTextArea(res));
