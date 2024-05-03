@@ -30,7 +30,6 @@ public class MainConsole {
         // We need to pass explicitly the shared collections as they must be shared among all verticles.
         final Set<String> alreadyVisitedPages = new ConcurrentSkipListSet<>();
         final AtomicBoolean isStopped = new AtomicBoolean(false); // Atomic for the GUI.
-        final AtomicInteger remainingSearches = new AtomicInteger(1); // Number of searches to be done, useful to know if the search is over.
 
         List<Future<String>> listOfFutures = new ArrayList<>();
 
@@ -39,10 +38,10 @@ public class MainConsole {
         for(int i = 0; i < nVerticle; i++){
             listOfFutures.add(vertx.deployVerticle(new VerticleSearch_v2(webAddress, depth, word, (res) -> {
                 System.out.println("Verticle: "+ res.id() +" -> [In '" + res.webAddress() + "' local occurrences: " + res.occurrences() + "]");
-            }, i, nVerticle, alreadyVisitedPages, isStopped, remainingSearches)));
+            }, i, nVerticle, alreadyVisitedPages, isStopped)));
         }
 
         // Only one of the verticles will complete the promise because only one will read remainingSearches == 0.
-        Future.any(listOfFutures).onComplete((res) -> System.exit(0));
+        Future.all(listOfFutures).onComplete((res) -> System.exit(0));
     }
 }

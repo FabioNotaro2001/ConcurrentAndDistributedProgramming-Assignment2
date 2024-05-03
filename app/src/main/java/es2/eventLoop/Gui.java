@@ -100,7 +100,6 @@ public class Gui extends JFrame {
                 stopRequested.set(false);
                 List<Future<String>> listOfFutures = new ArrayList<>();
                 Set<String> alreadyVisitedPages = new ConcurrentSkipListSet<>();
-                AtomicInteger remainingSearches = new AtomicInteger(1);
 
                 int nVerticle = 5;
 
@@ -108,7 +107,7 @@ public class Gui extends JFrame {
                 for(int i = 0; i < nVerticle; i++){
                     VerticleSearch_v2 verticle = new VerticleSearch_v2(webAddress, depth, word, res -> SwingUtilities.invokeLater(() -> {
                         updateTextArea(res);
-                    }), i, nVerticle, alreadyVisitedPages, stopRequested, remainingSearches);
+                    }), i, nVerticle, alreadyVisitedPages, stopRequested);
 
                     listOfVerticles.add(verticle);
                     listOfFutures.add(vertx.deployVerticle(verticle));

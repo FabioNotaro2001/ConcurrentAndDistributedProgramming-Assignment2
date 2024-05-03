@@ -18,10 +18,15 @@ public class VerticleSearch_v2 extends AbstractVerticle {
     // Record useful to link the result with the verticle that found it.
     record Result(String webAddress, int depth, int occurrences, int id) {}
 
+    // Various topics for coordination messages between verticles.
+    private static final String ADD_SEARCH = "add-search";
+    private static final String REM_SEARCH = "remove-search";
+    private static final String VERIFY = "verify";
+
     private final String webAddress;
     private final int maxDepth;
     private final String word;
-    private AtomicInteger remainingSearches;
+    private int remainingSearches;
     private final Set<String> alreadyVisitedPages;
     // Defines the action to be done after visiting a page (as results become available) depending on console or GUI.
     private final Consumer<Result> onPageVisited;
@@ -29,11 +34,11 @@ public class VerticleSearch_v2 extends AbstractVerticle {
     private final int verticleId;
     private final int nVerticles;   // Wished number of verticles.
 
-    public VerticleSearch_v2(String webAddress, int maxDepth, String word, Consumer<Result> onPageVisited, int id, int nVerticle, Set<String> alreadyVisitedPages, AtomicBoolean isStopped, AtomicInteger remainingSearches) {
+    public VerticleSearch_v2(String webAddress, int maxDepth, String word, Consumer<Result> onPageVisited, int id, int nVerticle, Set<String> alreadyVisitedPages, AtomicBoolean isStopped) {
         this.webAddress = webAddress;
         this.maxDepth = maxDepth;
         this.word = word;
-        this.remainingSearches = remainingSearches; // 1 because of the initial web address to be visited.
+        this.remainingSearches = 1; // 1 because of the initial web address to be visited.
         this.alreadyVisitedPages = alreadyVisitedPages;
         this.onPageVisited = onPageVisited;
         this.isStopped = isStopped;
@@ -47,8 +52,22 @@ public class VerticleSearch_v2 extends AbstractVerticle {
         String topic = "my-topic-" + verticleId;
 
         // Defines what to do after reading something on the event bus.
-        vertx.eventBus().consumer(topic, message -> {
-            crawl(message.body().toString(), promise);
+        vertx.eventBus().<String>consumer(topic, message -> {
+            crawl(message.body(), promise);
+        });
+
+        vertx.eventBus().consumer(ADD_SEARCH, message -> {
+            remainingSearches++;
+        });
+
+        vertx.eventBus().consumer(REM_SEARCH, message -> {
+            remainingSearches--;
+        });
+
+        vertx.eventBus().consumer(VERIFY, message -> {
+            if (remainingSearches == 0) {
+                promise.complete();
+            }
         });
 
         // Publication of the first link to be explored on the event bus (formatted).
@@ -70,13 +89,13 @@ public class VerticleSearch_v2 extends AbstractVerticle {
                 return null;
             }
             this.alreadyVisitedPages.add(webAddr);
-            return Jsoup.connect(webAddr).timeout(2000).get(); // Time out per siti che non rispondono                
+            return Jsoup.connect(webAddr).timeout(2000).get(); // Time out per siti che non rispondono
         };
 
         getVertx().executeBlocking(call)    // Executes call from another thread in order not to block the main one (as the connection is heavy).
         .onComplete(res -> {
             try{
-                this.remainingSearches.decrementAndGet();
+                vertx.eventBus().publish(REM_SEARCH, null);
 
                 Document document = res.result();
                 if(document == null){
@@ -99,7 +118,7 @@ public class VerticleSearch_v2 extends AbstractVerticle {
                         String nextUrl = link.absUrl("href").split("#")[0].replaceAll("/+$", "");
                         String noQueryStringUrl = nextUrl.split("\\?")[0].replaceAll("/+$", "");
                         if(!this.alreadyVisitedPages.contains(noQueryStringUrl) && (nextUrl.startsWith("https://") || nextUrl.startsWith("http://"))){//
-                            this.remainingSearches.incrementAndGet();
+                            vertx.eventBus().publish(ADD_SEARCH, null);
                             this.alreadyVisitedPages.add(noQueryStringUrl);
 
                             // For each link found compute the correct topic on which it must be published.
@@ -112,9 +131,7 @@ public class VerticleSearch_v2 extends AbstractVerticle {
                     }
                 }
             } finally {
-                if(remainingSearches.get() == 0){
-                    promise.complete();
-                }
+                vertx.eventBus().publish(VERIFY, null);
             }
         });
     }
