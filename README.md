@@ -6,15 +6,15 @@ This project is part of the Concurrent and Distributed Programming course, focus
 
 ## Features
 
-- **Concurrency**: Utilizes multiple threads to perform tasks simultaneously, improving performance and responsiveness.
-- **Distributed System**: Implements a client-server architecture to demonstrate communication between distributed components.
-- **Synchronization**: Employs synchronization mechanisms to manage access to shared resources and prevent race conditions.
+- **Concurrency** -> utilizes multiple threads to perform tasks simultaneously, improving performance and responsiveness
+- **Distributed System** -> Implements a client-server architecture to demonstrate communication between distributed components
+- **Synchronization** -> employs synchronization mechanisms to manage access to shared resources and prevent race conditions.
 
 ## Technologies Used
 
-- **Programming Language**: Java
-- **Concurrency Framework**: Java Threads
-- **Networking**: Java Sockets for client-server communication
+- **Programming Language** -> Java
+- **Concurrency Framework** -> Java Threads
+- **Networking** -> Java Sockets for client-server communication.
 
 ## Getting Started
 
@@ -59,6 +59,4 @@ License
 This project is licensed under the MIT License - see the LICENSE file for details.
 Acknowledgments
 
-    [Instructor's Name] for guidance and support throughout the course.
-
-    [Any other acknowledgments or references]
+    Alessandro Ricci for guidance and support throughout the course.
